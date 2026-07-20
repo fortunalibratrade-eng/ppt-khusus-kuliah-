@@ -49,7 +49,7 @@ html.dir-back::view-transition-new(root){ animation: flyInBack .75s cubic-bezier
 #topbar span{ color:var(--muted); font-weight:700; }
 #topbar.is-dark span{ color:#9db0c6; }
 
-#stage{ position:fixed; inset:0; padding:86px 78px 128px 78px; z-index:10; perspective:1800px; }
+#stage{ position:fixed; inset:0; padding:86px 78px 128px 78px; z-index:10; perspective:1800px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
 .kicker{ font-weight:800; font-size:16.5px; letter-spacing:3.2px; text-transform:uppercase; color:var(--emerald2); margin-bottom:8px; view-transition-name:kicker; }
 .is-dark .kicker{ color:var(--gold); }
 h1.mtitle{ font-family:var(--display); font-weight:700; color:var(--navy); font-size:40.5px; line-height:1.15; margin:0 0 20px 0; letter-spacing:-.4px; view-transition-name:mainTitle; }
@@ -64,6 +64,16 @@ h1.mtitle.hero{ font-size:66px; margin-bottom:30px; }
 .badge svg{ width:25px;height:25px; }
 .num{ width:43px;height:43px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:19.5px;flex:0 0 auto;
   box-shadow: inset 0 2px 3px rgba(255,255,255,.25), inset 0 -4px 6px rgba(0,0,0,.35), 0 3px 0 rgba(0,0,0,.3), 0 10px 16px -8px rgba(14,32,56,.6); }
+
+/* FIX: any bare icon svg dropped straight into markup (not inside .badge/.num) previously had
+   no width/height, so browsers fell back to the ~300x150 replaced-element default box, which
+   rendered as an oversized, mostly-empty grey rectangle (this was the "kerangka berpikir" bug
+   in the screenshot — it happens on every slide that uses a bare arrow icon, slide 3 and 6
+   included). Give every inline svg in the deck a sane default size unless something more
+   specific (.badge svg, .num svg) already overrides it. */
+#stage svg, #introMark svg{ width:26px; height:26px; display:block; flex:0 0 auto; }
+.badge svg{ width:25px;height:25px; }
+.arrow-ic{ width:22px;height:22px; }
 
 .stagebody, #stage > div{ transform-style:preserve-3d; }
 #stageInner{ transition:transform .25s ease-out; will-change:transform; }
@@ -92,7 +102,7 @@ h1.mtitle.hero{ font-size:66px; margin-bottom:30px; }
 #driveLink{ position:fixed; top:22px; left:50%; transform:translateX(-50%); z-index:55; display:flex; align-items:center; gap:8px;
   font-size:13.5px; font-weight:700; letter-spacing:.6px; color:var(--muted); text-decoration:none; background:rgba(255,255,255,.7);
   border:1px solid var(--line); padding:8px 15px 7px 10px; border-radius:999px; pointer-events:auto; backdrop-filter:blur(6px);
-  transition:box-shadow .2s ease, transform .2s ease, background .2s ease; }
+  transition:box-shadow .2s ease, transform .2s ease, background .2s ease; white-space:nowrap; }
 #driveLink svg{ width:16px;height:16px; flex:0 0 auto; }
 #driveLink:hover{ box-shadow:0 8px 18px -8px rgba(14,32,56,.4); transform:translateX(-50%) translateY(-1px); }
 .is-dark ~ #driveLink, #driveLink.is-dark{ background:rgba(255,255,255,.08); color:#dfe8f0; border-color:rgba(255,255,255,.18); }
@@ -124,7 +134,7 @@ h1.mtitle.hero{ font-size:66px; margin-bottom:30px; }
   filter:blur(6px); opacity:0; animation:glowIn 2.4s ease forwards .1s, glowPulse 6s ease-in-out infinite 2.4s; }
 @keyframes glowIn{ to{ opacity:1; } }
 @keyframes glowPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
-#introMark{ position:relative; z-index:2; text-align:center; opacity:0; transform:translateZ(-420px) rotateX(38deg) rotateY(-6deg) scale(.8); animation:introMarkIn 1.7s cubic-bezier(.16,.8,.2,1) .35s forwards; transform-style:preserve-3d; }
+#introMark{ position:relative; z-index:2; text-align:center; opacity:0; transform:translateZ(-420px) rotateX(38deg) rotateY(-6deg) scale(.8); animation:introMarkIn 1.7s cubic-bezier(.16,.8,.2,1) .35s forwards; transform-style:preserve-3d; padding:0 24px; }
 #introMark .il{ display:block; font-family:var(--display); font-weight:900; letter-spacing:10px; text-transform:uppercase; margin-bottom:20px; opacity:0; animation:introFade .9s ease forwards 1.15s; color:var(--gold); font-size:18.5px;
   text-shadow:0 0 18px rgba(201,162,39,.5); }
 #introMark h2{ font-family:var(--display); font-weight:700; font-size:58px; color:#fff; margin:0; line-height:1.24; max-width:940px;
@@ -163,6 +173,44 @@ h1.mtitle.hero{ font-size:66px; margin-bottom:30px; }
 #skipIntro:hover{ background:rgba(201,162,39,.16); color:#fff; transform:translateY(-1px); }
 #introHairline{ position:absolute; left:50%; bottom:66px; width:1px; height:0; background:linear-gradient(180deg,transparent,rgba(201,162,39,.6)); z-index:2; animation:hairlineGrow 1.4s ease forwards 2.6s; }
 @keyframes hairlineGrow{ to{ height:46px; } }
+
+/* ---------------- Responsive layer ---------------- */
+@media (max-width: 1180px){
+  #stage{ padding:78px 44px 118px 44px; }
+  #topbar{ left:32px; right:32px; }
+  h1.mtitle{ font-size:33px; }
+  h1.mtitle.hero{ font-size:48px; }
+  .grid3{ grid-template-columns:1fr 1fr; }
+  .grid4{ grid-template-columns:1fr 1fr; }
+}
+@media (max-width: 860px){
+  body{ overflow:auto; }
+  #stage{ padding:118px 22px 150px 22px; perspective:none; }
+  #topbar{ left:20px; right:20px; top:14px; font-size:12px; letter-spacing:1.2px; }
+  #driveLink{ padding:6px 12px 6px 8px; font-size:11.5px; }
+  #driveLink span{ display:none; }
+  .kicker{ font-size:13px; letter-spacing:2px; }
+  h1.mtitle{ font-size:26px; margin-bottom:14px; }
+  h1.mtitle.hero{ font-size:34px; margin-bottom:20px; }
+  .grid2, .grid3, .grid4{ grid-template-columns:1fr; gap:14px; }
+  .card{ padding:16px !important; }
+  .cbody{ font-size:14.5px; }
+  .ctitle{ font-size:16.5px; }
+  #spineWrap{ padding:0 20px; height:64px; }
+  #spineLabel{ left:20px; bottom:18px; font-size:11px; }
+  #navHint{ display:none; }
+  #notesPanel{ left:16px; right:16px; width:auto; bottom:74px; }
+  #introMark h2{ font-size:30px; }
+  #introMark .il{ font-size:13px; letter-spacing:5px; }
+  #introMark .sub{ font-size:12px; letter-spacing:1.5px; }
+  #ringA{ width:340px; height:340px; } #ringB{ width:460px; height:460px; } #ringC{ width:580px; height:580px; }
+  /* per-card mouse-tilt is a desktop-hover affordance; skip it on touch so cards don't
+     get stuck mid-tilt after a tap (touch devices fire pointermove without a matching
+     pointerleave), and let the page scroll normally instead of relying on stage padding math. */
+}
+@media (hover:none){
+  #stageInner{ transform:none !important; }
+}
 </style>
 </head>
 <body>
@@ -259,8 +307,8 @@ const S = [
       "Kalimantan Barat memiliki keberagaman agama dan sejarah rekonsiliasi yang khas, namun praktik komunikasi digital masyarakatnya dalam konteks perayaan keagamaan belum banyak dikaji secara mendalam.",
       "Penelitian meme di Indonesia masih jarang berfokus khusus pada platform TikTok dan jarang pula menggunakan pendekatan netnografi yang melibatkan peneliti langsung dalam komunitas digital."];
     return `<p class="enter n0" style="font-size:17.5px;color:var(--ink);line-height:1.65;max-width:1080px;margin:0 0 20px 0;animation-delay:.03s;">Kehidupan bermasyarakat di era digital mengalami pergeseran besar dalam cara manusia berkomunikasi. Di antara berbagai platform yang berkembang di Indonesia, <b>TikTok</b> tampil sebagai ruang ekspresi audiovisual paling digemari generasi muda, sebab format kontennya singkat, dinamis, dan mudah menyebar lewat algoritma <i>For You Page</i>. Dari sinilah muncul fenomena menarik: meme keagamaan — dahulu sekadar humor visual — kini berkembang menjadi medium yang memuat pesan perdamaian, toleransi, dan penghargaan atas kebinekaan.</p>
-    <div style="display:flex;gap:29px;">
-      <div style="flex:1.4;display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;gap:29px;flex-wrap:wrap;">
+      <div style="flex:1.4;min-width:320px;display:flex;flex-direction:column;gap:16px;">
         ${rows.map((r,i)=>`<div class="card enter n${i+1}" style="padding:18px 22px;display:flex;gap:16px;animation-delay:${.15+i*.13}s">
           <div class="badge navy" style="width:46px;height:46px;flex-shrink:0;">${I[r[0]]}</div>
           <div><h3 class="ctitle" style="font-size:17px;">${r[1]}</h3><p class="cbody" style="font-size:15px;">${r[2]}</p></div>
@@ -273,7 +321,7 @@ const S = [
           </div>`).join('')}
         </div>
       </div>
-      <div class="card enter n4" style="flex:.95;background:linear-gradient(160deg,var(--emerald),var(--emerald2));color:#fff;padding:26px;border:none;animation-delay:.55s;">
+      <div class="card enter n4" style="flex:.95;min-width:260px;background:linear-gradient(160deg,var(--emerald),var(--emerald2));color:#fff;padding:26px;border:none;animation-delay:.55s;">
         <div style="font-family:var(--display);font-weight:700;font-size:56px;line-height:1;">73,5%</div>
         <p style="font-size:14.5px;color:#e6f2ec;margin-top:10px;line-height:1.5;">pengguna internet Indonesia usia 16–64 tahun aktif menggunakan TikTok — salah satu platform video pendek dengan pertumbuhan tercepat di Asia Tenggara.</p>
         <div style="height:1px;background:rgba(255,255,255,.3);margin:14px 0;"></div>
@@ -301,7 +349,7 @@ const S = [
     const manfaat=[["book","Manfaat Teoritis","Penelitian ini diharapkan memperkaya khazanah ilmu komunikasi, khususnya kajian komunikasi agama digital dan komunikasi perdamaian di Indonesia, sekaligus mengembangkan kerangka analisis semiotika yang diterapkan secara mendalam pada konten audiovisual TikTok.","var(--emerald)"],
       ["target","Manfaat Praktis","Temuan penelitian ini diharapkan menjadi rujukan bagi pemerintah daerah, Kesbangpol, dan FKUB dalam merancang strategi komunikasi perdamaian, serta menjadi masukan bagi kreator konten TikTok dalam memproduksi konten yang mendukung toleransi dan kerukunan.","var(--gold)"]];
     return `
-    <div style="display:grid;grid-template-columns:38px 1fr 38px 1fr;gap:0 14px;align-items:stretch;margin-bottom:20px;">
+    <div class="rm-grid" style="display:grid;grid-template-columns:38px 1fr 38px 1fr;gap:0 14px;align-items:stretch;margin-bottom:20px;">
       <div></div>
       <div style="font-weight:800;font-size:13.5px;letter-spacing:1.5px;color:var(--emerald2);padding-bottom:6px;">RUMUSAN MASALAH</div>
       <div></div>
@@ -334,7 +382,7 @@ const S = [
         <div class="badge">${I[c[0]]}</div><h3 class="ctitle" style="margin-top:12px;font-size:17.5px;">${c[1]}</h3><p class="cbody" style="font-size:15px;">${c[2]}</p>
       </div>`).join('')}
     </div>
-    <div class="card enter n3" style="margin-top:18px;background:var(--navy);border:none;padding:20px 29px;display:flex;gap:18px;align-items:center;animation-delay:.5s;">
+    <div class="card enter n3" style="margin-top:18px;background:var(--navy);border:none;padding:20px 29px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;animation-delay:.5s;">
       <div class="badge gold" style="flex-shrink:0;">${I.flag}</div>
       <div><div style="color:#fff;font-family:var(--display);font-weight:700;font-size:19px;">Kebaruan Penelitian</div>
       <div style="color:#cfe0da;font-size:15px;margin-top:5px;line-height:1.55;">Dari ketiga kluster di atas, belum ada satu pun penelitian yang secara khusus mengintegrasikan empat dimensi sekaligus: meme sebagai objek, pesan damai sebagai fokus analisis, konteks lokal Kalimantan Barat, dan TikTok sebagai platform yang dikaji secara spesifik melalui pendekatan netnografi.</div></div>
@@ -373,39 +421,50 @@ const S = [
   }
 },
 
-// SLIDE 6 — KERANGKA BERPIKIR
+// SLIDE 6 — KERANGKA BERPIKIR (diperjelas: tiap tahap sekarang membawa keterangan input → proses → output,
+// sehingga alurnya benar-benar bisa "dibaca" audiens, bukan cuma rangkaian kotak)
 { kicker:"Kerangka Berpikir Penelitian", title:"Dari Fenomena Menuju Temuan", spine:"Kerangka Berpikir",
-  notes:"Slide penghubung untuk dijelaskan secara lisan: mulai dari fenomena meme TikTok di Kalbar, dibedah dengan Barthes, dipetakan lewat kategori media sharing Nasrullah, dinilai dengan kerangka komunikasi perdamaian, hingga menghasilkan temuan akhir.",
+  notes:"Slide penghubung untuk dijelaskan secara lisan: mulai dari fenomena meme TikTok di Kalbar, dibedah dengan Barthes, dipetakan lewat kategori media sharing Nasrullah, dinilai dengan kerangka komunikasi perdamaian, hingga menghasilkan temuan akhir. Tiap kotak sekarang punya label kecil 'input/proses/output' — jelaskan itu berurutan agar penguji melihat alurnya, bukan cuma daftar konsep.",
   body:()=>{
     return `
-    <p class="enter n0" style="font-size:16px;color:var(--muted);max-width:980px;line-height:1.55;margin:0 0 16px 0;animation-delay:.02s;">Kerangka berikut merangkum alur logika penelitian ini: dari fenomena di lapangan, melalui dua pisau pembacaan makna dan platform, hingga sampai pada kerangka penilaian dan temuan akhir yang diharapkan.</p>
+    <p class="enter n0" style="font-size:16px;color:var(--muted);max-width:980px;line-height:1.55;margin:0 0 16px 0;animation-delay:.02s;">Kerangka berikut merangkum alur logika penelitian ini secara berjenjang: bermula dari fenomena empiris di lapangan, dibedah dengan dua pisau analisis (makna dan platform), dinilai dengan satu kerangka normatif, hingga menghasilkan temuan akhir yang dijawab langsung ke tiga rumusan masalah.</p>
+
     <div class="enter n0" style="animation-delay:.05s">
-      <div class="card" style="padding:18px 26px;text-align:center;background:var(--navy);border:none;">
-        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:18.5px;">Fenomena: Meme Perayaan Ritual Keagamaan di TikTok Komunitas Kalimantan Barat</span>
+      <div class="card" style="padding:18px 26px;background:var(--navy);border:none;">
+        <div style="font-size:11.5px;letter-spacing:1.5px;color:var(--gold);font-weight:800;margin-bottom:6px;">TAHAP 1 · FENOMENA (TITIK BERANGKAT)</div>
+        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:19px;">Meme Perayaan Ritual Keagamaan di TikTok Komunitas Kalimantan Barat</span>
+        <p style="color:#c9d6e6;font-size:13.5px;margin:8px 0 0 0;line-height:1.5;">Video pendek warganet Kalbar bertema Idulfitri, Natal, Imlek/Cap Go Meh, dan Gawai Dayak tahun 2023–2024, yang memuat interaksi lintas agama.</p>
       </div>
     </div>
-    <div class="enter n0" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.15s;margin:5px 0;">${I.arrowDown}</div>
+    <div class="enter n0" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.15s;margin:6px 0;">${I.arrowDown}</div>
+
     <div class="grid2 enter n1" style="animation-delay:.22s;">
       <div class="card" style="padding:18px 22px;">
+        <div style="font-size:11px;letter-spacing:1.5px;color:var(--emerald2);font-weight:800;margin-bottom:8px;">TAHAP 2A · PISAU MAKNA</div>
         <div class="row"><div class="badge navy" style="width:39px;height:39px;">${I.eye}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:16.5px;">Semiotika Barthes</h3></div>
-        <p class="cbody" style="margin-top:6px;font-size:14.5px;">Denotasi → Konotasi → Mitos, dibaca dari elemen visual, verbal, dan audio meme.</p>
+        <p class="cbody" style="margin-top:8px;font-size:14.5px;">Setiap meme dibaca tiga lapis: <b>denotasi</b> (apa yang tampak), <b>konotasi</b> (asosiasi nilai di baliknya), lalu <b>mitos</b> (mengapa nilai itu terasa wajar) — diterapkan pada elemen visual, verbal, dan audio.</p>
       </div>
       <div class="card" style="padding:18px 22px;">
+        <div style="font-size:11px;letter-spacing:1.5px;color:var(--emerald2);font-weight:800;margin-bottom:8px;">TAHAP 2B · PISAU PLATFORM</div>
         <div class="row"><div class="badge" style="width:39px;height:39px;">${I.video}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:16.5px;">Nasrullah — Media Sharing</h3></div>
-        <p class="cbody" style="margin-top:6px;font-size:14.5px;">Memetakan karakteristik khas TikTok sebagai lokus tunggal penelitian.</p>
+        <p class="cbody" style="margin-top:8px;font-size:14.5px;">Memosisikan TikTok sebagai kategori <i>media sharing</i>, sehingga fitur duet, stitch, tren sound, dan algoritma FYP ikut diperhitungkan sebagai bagian dari makna, bukan sekadar latar teknis.</p>
       </div>
     </div>
-    <div class="enter n2" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.32s;margin:5px 0;">${I.arrowDown}</div>
+    <div class="enter n2" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.32s;margin:6px 0;">${I.arrowDown}</div>
+
     <div class="enter n3" style="animation-delay:.4s;">
-      <div class="card" style="padding:18px 22px;max-width:640px;margin:0 auto;">
-        <div class="row"><div class="badge" style="width:39px;height:39px;background:var(--gold);">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:16.5px;">Komunikasi Perdamaian</h3></div>
-        <p class="cbody" style="margin-top:6px;font-size:14.5px;text-align:center;">Inklusif · Dialogis · Rekonsiliatoris — kerangka normatif untuk menilai muatan damai dalam meme.</p>
+      <div class="card" style="padding:18px 22px;max-width:680px;margin:0 auto;">
+        <div style="font-size:11px;letter-spacing:1.5px;color:var(--gold);font-weight:800;margin-bottom:8px;text-align:center;">TAHAP 3 · KERANGKA PENILAIAN NORMATIF</div>
+        <div class="row" style="justify-content:center;"><div class="badge" style="width:39px;height:39px;background:var(--gold);">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:16.5px;">Komunikasi Perdamaian</h3></div>
+        <p class="cbody" style="margin-top:8px;font-size:14.5px;text-align:center;">Hasil pembacaan Barthes dinilai lewat tiga bentuk: <b>inklusif</b> · <b>dialogis</b> · <b>rekonsiliatoris</b> — untuk melihat sejauh mana meme benar-benar membawa muatan damai.</p>
       </div>
     </div>
-    <div class="enter n4" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.5s;margin:5px 0;">${I.arrowDown}</div>
+    <div class="enter n4" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.5s;margin:6px 0;">${I.arrowDown}</div>
+
     <div class="enter n5" style="animation-delay:.58s;">
-      <div class="card" style="padding:18px 26px;text-align:center;background:linear-gradient(160deg,var(--emerald),var(--emerald2));border:none;">
-        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:18.5px;">Representasi Pesan Damai & Makna Kerukunan oleh Kreator TikTok Kalimantan Barat</span>
+      <div class="card" style="padding:18px 26px;background:linear-gradient(160deg,var(--emerald),var(--emerald2));border:none;">
+        <div style="font-size:11.5px;letter-spacing:1.5px;color:#eaf5ef;font-weight:800;margin-bottom:6px;">TAHAP 4 · TEMUAN (TITIK TUJU) — MENJAWAB RUMUSAN MASALAH 1–3</div>
+        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:19px;">Representasi Pesan Damai & Makna Kerukunan oleh Kreator TikTok Kalimantan Barat</span>
       </div>
     </div>`;
   }
@@ -456,8 +515,8 @@ const S = [
       ["Petebang (1999); Amirrachman (2007)","Konflik & rekonsiliasi Kalbar","Kearifan lokal dan mekanisme adat berhasil memulihkan kohesi sosial masyarakat Kalbar pascakonflik etnis 1996/1997 dan 1999.","Menjembatani sejarah rekonsiliasi ini dengan ekspresi digital masa kini di TikTok, sesuatu yang belum pernah dikaji."],
     ];
     return `
-    <div class="card enter n0" style="padding:0;overflow:hidden;animation-delay:.05s;">
-      <table style="width:100%;border-collapse:collapse;font-size:15px;">
+    <div class="card enter n0" style="padding:0;overflow-x:auto;animation-delay:.05s;">
+      <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:15px;">
         <thead>
           <tr style="background:var(--navy);">
             <th style="color:#fff;text-align:left;padding:14px 18px;font-weight:700;font-size:13.5px;letter-spacing:.5px;">Peneliti (Tahun)</th>
@@ -556,15 +615,21 @@ tickNet();
 
 // Whole-slide parallax: the stage's content plane leans subtly toward the
 // pointer, on top of (not instead of) the per-card tilt in attachTilt().
-document.addEventListener('pointermove', (e)=>{
-  const inner = document.getElementById('stageInner');
-  if(!inner) return;
-  const px = e.clientX/innerWidth - .5;
-  const py = e.clientY/innerHeight - .5;
-  inner.style.transform = `rotateX(${(-py*3.2).toFixed(2)}deg) rotateY(${(px*3.6).toFixed(2)}deg)`;
-});
+// Skipped on touch/coarse-pointer devices (see isFinePointer below) so a
+// phone screen doesn't get a permanently-tilted layout after the last tap.
+const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+if(isFinePointer){
+  document.addEventListener('pointermove', (e)=>{
+    const inner = document.getElementById('stageInner');
+    if(!inner) return;
+    const px = e.clientX/innerWidth - .5;
+    const py = e.clientY/innerHeight - .5;
+    inner.style.transform = `rotateX(${(-py*3.2).toFixed(2)}deg) rotateY(${(px*3.6).toFixed(2)}deg)`;
+  });
+}
 
 function attachTilt(){
+  if(!isFinePointer) return;
   document.querySelectorAll('#stage .card').forEach(card=>{
     card.style.transition = 'transform .12s ease-out, box-shadow .18s ease-out';
     card.addEventListener('pointermove', (e)=>{
@@ -618,8 +683,13 @@ function renderStatic(i){
   topbar.classList.toggle('is-dark', !!s.dark);
   driveLink.classList.toggle('is-dark', !!s.dark);
   const pal = orbPalettes[i % orbPalettes.length];
-  orbA.style.cssText += `width:593px;height:593px;background:radial-gradient(circle,${pal[0]},transparent 70%);top:${s.dark? -180:-160}px;right:${i%2? -140:-180}px;`;
-  orbB.style.cssText += `width:388px;height:388px;background:radial-gradient(circle,${pal[1]},transparent 70%);bottom:${-120-(i%3)*20}px;left:${-100-(i%2)*40}px;`;
+  // FIX: was `orbA.style.cssText += ...`, which appended new declarations onto the
+  // element's style attribute forever instead of replacing it. On a long deck that
+  // just grows an ever-longer style string (harmless for the same properties, since
+  // later duplicates win, but wasteful and fragile) — using a plain `=` here keeps
+  // each slide's orb styling self-contained and easy to reason about.
+  orbA.style.cssText = `width:593px;height:593px;background:radial-gradient(circle,${pal[0]},transparent 70%);top:${s.dark? -180:-160}px;right:${i%2? -140:-180}px;`;
+  orbB.style.cssText = `width:388px;height:388px;background:radial-gradient(circle,${pal[1]},transparent 70%);bottom:${-120-(i%3)*20}px;left:${-100-(i%2)*40}px;`;
 
   const bgHtml = s.bibliography
     ? `<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.14;font-size:13px;line-height:1.9;color:#fff;columns:2;column-gap:40px;padding:70px 0 0 0;">
@@ -646,7 +716,24 @@ function renderStatic(i){
     d.classList.toggle('active', di===i);
   });
   notesPanel.innerHTML = '<b>Catatan:</b> ' + s.notes;
+  stage.scrollTop = 0;
 }
+
+// FIX: Brave's Chromium build has a known View Transitions bug where 3D transforms
+// (rotateX/rotateY/translateZ) applied to the ::view-transition-old/new(root)
+// snapshot pseudo-elements can fail to fully composite out, leaving a leftover
+// grey/blue "ghost" rectangle from the outgoing slide frozen on screen — this is
+// almost certainly the artifact in the "kerangka berpikir" screenshot, since the
+// URL bar/dock in that capture is Brave. Real Chrome and Edge handle it fine. We
+// can't fix Brave's compositor from here, so we detect it and skip the custom 3D
+// root transition for Brave specifically, falling back to a safe instant swap
+// (still keeps the per-card 3D "enter" animations, which are unaffected).
+let useViewTransition = typeof document.startViewTransition === 'function';
+(function detectBrave(){
+  if(navigator.brave && typeof navigator.brave.isBrave === 'function'){
+    navigator.brave.isBrave().then(isBrave=>{ if(isBrave) useViewTransition = false; }).catch(()=>{});
+  }
+})();
 
 let transitioning = false;
 function goTo(i){
@@ -661,7 +748,7 @@ function goTo(i){
   idx = i;
   document.documentElement.classList.remove('dir-fwd','dir-back');
   document.documentElement.classList.add(forward ? 'dir-fwd' : 'dir-back');
-  if(document.startViewTransition){
+  if(useViewTransition && document.startViewTransition){
     transitioning = true;
     let t;
     try{
@@ -683,6 +770,7 @@ function goTo(i){
     setTimeout(()=>{ transitioning = false; }, 1400);
   } else {
     renderStatic(idx);
+    document.documentElement.classList.remove('dir-fwd','dir-back');
   }
 }
 
@@ -700,6 +788,8 @@ document.addEventListener('click', (e)=>{
   if(e.target.closest('#notesPanel')) return;
   if(e.target.closest('#driveLink')) return;
   if(e.target.closest('#introOverlay')) return;
+  if(e.target.closest('.spineDot')) return;
+  if(e.target.closest('#stage') && window.matchMedia('(max-width: 860px)').matches) return;
   const x = e.clientX / window.innerWidth;
   if(x < 0.35) goTo(idx-1); else if(x > 0.65) goTo(idx+1);
 });
@@ -812,4 +902,4 @@ document.querySelectorAll('.spineDot').forEach(d=>{
 })();
 </script>
 </body>
-</html> 
+</html>
