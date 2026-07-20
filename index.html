@@ -17,15 +17,27 @@ html,body{height:100%;margin:0;}
 body{font-family:var(--body); color:var(--ink); background:#000; overflow:hidden;}
 
 /* ---------- View Transition tuning (the "connected" morph feel) ---------- */
+::view-transition{ perspective:1900px; }
 ::view-transition-group(*){ animation-duration:.7s; animation-timing-function:cubic-bezier(.2,.7,.2,1); }
 ::view-transition-old(mainTitle), ::view-transition-new(mainTitle){ height:100%; }
-::view-transition-old(root), ::view-transition-new(root){ animation-duration:.5s; }
 
-#app{ position:fixed; inset:0; background:var(--ivory); }
-#app.is-dark{ background:var(--navy); }
+html.dir-fwd::view-transition-old(root){ animation: flyOutFwd .55s cubic-bezier(.4,0,.7,.2) both; }
+html.dir-fwd::view-transition-new(root){ animation: flyInFwd .75s cubic-bezier(.16,.8,.2,1) both; }
+html.dir-back::view-transition-old(root){ animation: flyOutBack .55s cubic-bezier(.4,0,.7,.2) both; }
+html.dir-back::view-transition-new(root){ animation: flyInBack .75s cubic-bezier(.16,.8,.2,1) both; }
+@keyframes flyOutFwd{ to{ transform:translateZ(-560px) rotateY(-14deg) translateX(-50px); opacity:0; } }
+@keyframes flyInFwd{ from{ transform:translateZ(600px) rotateY(16deg) translateX(70px); opacity:0;} to{ transform:none; opacity:1;} }
+@keyframes flyOutBack{ to{ transform:translateZ(-560px) rotateY(14deg) translateX(50px); opacity:0; } }
+@keyframes flyInBack{ from{ transform:translateZ(600px) rotateY(-16deg) translateX(-70px); opacity:0;} to{ transform:none; opacity:1;} }
+
+#netCanvas{ position:fixed; inset:0; z-index:3; pointer-events:none; }
+
+#bgBase{ position:fixed; inset:0; background:var(--ivory); z-index:0; }
+#bgBase.is-dark{ background:var(--navy); }
+#app{ position:fixed; inset:0; background:transparent; z-index:10; }
 
 /* ambient morphing orbs — same element, persists & drifts across slides */
-.orb{ position:fixed; border-radius:50%; filter:blur(4px); pointer-events:none; transition:none; }
+.orb{ position:fixed; border-radius:50%; filter:blur(4px); pointer-events:none; transition:none; z-index:1; }
 #orbA{ view-transition-name: orbA; }
 #orbB{ view-transition-name: orbB; }
 @keyframes driftA{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(18px,-24px);} }
@@ -40,7 +52,7 @@ body{font-family:var(--body); color:var(--ink); background:#000; overflow:hidden
 /* topbar */
 #topbar{ position:fixed; top:22px; left:64px; right:64px; display:flex; justify-content:space-between; align-items:center; z-index:40; font-size:12px; letter-spacing:2px; }
 #topbar span{ color:var(--muted); font-weight:700; }
-.is-dark ~ #topbar span, #app.is-dark + #progressTrack + #topbar span{ color:#9db0c6; }
+#topbar.is-dark span{ color:#9db0c6; }
 
 /* stage layout */
 #stage{ position:fixed; inset:0; padding:96px 90px 120px 90px; z-index:10; }
@@ -50,14 +62,21 @@ h1.mtitle{ font-family:var(--display); font-weight:700; color:var(--navy); font-
 .is-dark h1.mtitle{ color:#fff; }
 h1.mtitle.hero{ font-size:52px; }
 
-.stagebody{ view-transition-name:stagebody; }
+.stagebody{ }
+
+/* card 3D tilt support */
+.card{ will-change:transform; }
+#stage{ perspective:1600px; }
 
 /* card system */
-.card{ background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 16px 36px -22px rgba(14,32,56,.35); }
-.badge{ width:48px;height:48px;border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--emerald); color:#fff; flex:0 0 auto; box-shadow:0 10px 18px -9px rgba(31,111,84,.55); }
-.badge.navy{ background:var(--navy); } .badge.gold{ background:var(--gold); }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 16px 36px -22px rgba(14,32,56,.35); transition:box-shadow .2s ease; }
+.badge{ width:48px;height:48px;border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--emerald); color:#fff; flex:0 0 auto;
+  box-shadow: inset 0 2px 3px rgba(255,255,255,.4), inset 0 -4px 6px rgba(0,0,0,.28), 0 3px 0 rgba(0,0,0,.18), 0 12px 20px -9px rgba(31,111,84,.6); }
+.badge.navy{ background:var(--navy); box-shadow: inset 0 2px 3px rgba(255,255,255,.25), inset 0 -4px 6px rgba(0,0,0,.35), 0 3px 0 rgba(0,0,0,.3), 0 12px 20px -9px rgba(14,32,56,.7); }
+.badge.gold{ background:var(--gold); box-shadow: inset 0 2px 3px rgba(255,255,255,.5), inset 0 -4px 6px rgba(0,0,0,.22), 0 3px 0 rgba(0,0,0,.16), 0 12px 20px -9px rgba(201,162,39,.6); }
 .badge svg{ width:24px;height:24px; }
-.num{ width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:17px;flex:0 0 auto;}
+.num{ width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:17px;flex:0 0 auto;
+  box-shadow: inset 0 2px 3px rgba(255,255,255,.25), inset 0 -4px 6px rgba(0,0,0,.35), 0 3px 0 rgba(0,0,0,.3), 0 10px 16px -8px rgba(14,32,56,.6); }
 
 /* entrance stagger — replays every time a slide is shown */
 .enter{ opacity:0; transform:translateY(18px); animation:enterUp .6s cubic-bezier(.2,.7,.2,1) forwards; }
@@ -66,8 +85,8 @@ h1.mtitle.hero{ font-size:52px; }
 .enter.n3{animation-delay:.38s;} .enter.n4{animation-delay:.49s;} .enter.n5{animation-delay:.6s;}
 
 /* spine — persistent connective thread across all slides */
-#spineWrap{ position:fixed; left:0; right:0; bottom:0; height:78px; z-index:40; display:flex; align-items:center; padding:0 90px; }
-#spineTrack{ position:relative; flex:1; height:2px; background:rgba(120,140,160,.35); border-radius:2px; }
+#spineWrap{ position:fixed; left:0; right:0; bottom:0; height:86px; z-index:40; display:flex; align-items:center; padding:0 90px; perspective:500px; }
+#spineTrack{ position:relative; flex:1; height:2px; background:rgba(120,140,160,.35); border-radius:2px; transform:rotateX(42deg); transform-origin:center bottom; }
 #spineFill{ position:absolute; left:0; top:0; height:100%; background:linear-gradient(90deg,var(--emerald),var(--gold)); border-radius:2px; view-transition-name:spineFill; }
 .spineDot{ position:absolute; top:50%; width:9px; height:9px; border-radius:50%; background:#b9c6d1; transform:translate(-50%,-50%); transition:none; }
 .spineDot.active{ width:15px; height:15px; background:var(--gold); box-shadow:0 0 0 5px rgba(201,162,39,.22); view-transition-name:spineActive; }
@@ -93,8 +112,10 @@ h1.mtitle.hero{ font-size:52px; }
 </head>
 <body>
 
+<div id="bgBase"></div>
 <div id="orbA" class="orb"></div>
 <div id="orbB" class="orb"></div>
+<canvas id="netCanvas"></canvas>
 <div id="progressTrack"><div id="progressFill" style="width:0%"></div></div>
 <div id="topbar"><span id="secLabel"></span><span id="pageLabel"></span></div>
 <div id="app"><div id="stage"></div></div>
@@ -347,14 +368,72 @@ const S = [
 },
 ];
 
-// ---------------- Engine ----------------
+// ---------------- Ambient 3D particle network (represents the digital social network) ----------------
+const netCanvas = document.getElementById('netCanvas');
+const nctx = netCanvas.getContext('2d');
+function resizeNet(){ netCanvas.width = innerWidth; netCanvas.height = innerHeight; }
+resizeNet(); window.addEventListener('resize', resizeNet);
+const nodes = Array.from({length:42}, ()=>({
+  x:Math.random()*innerWidth, y:Math.random()*innerHeight, z:Math.random(),
+  vx:(Math.random()-.5)*0.22, vy:(Math.random()-.5)*0.22
+}));
+let netRGB = '31,111,84';
+function tickNet(){
+  nctx.clearRect(0,0,netCanvas.width,netCanvas.height);
+  nodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0||n.x>netCanvas.width) n.vx*=-1;
+    if(n.y<0||n.y>netCanvas.height) n.vy*=-1;
+  });
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i], b=nodes[j];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if(d<145){
+        nctx.strokeStyle = `rgba(${netRGB},${(1-d/145)*0.16})`;
+        nctx.lineWidth = 1;
+        nctx.beginPath(); nctx.moveTo(a.x,a.y); nctx.lineTo(b.x,b.y); nctx.stroke();
+      }
+    }
+  }
+  nodes.forEach(n=>{
+    const r = 1.3 + n.z*2.6;
+    nctx.beginPath();
+    nctx.fillStyle = `rgba(${netRGB},${0.22+n.z*0.5})`;
+    nctx.arc(n.x, n.y, r, 0, Math.PI*2);
+    nctx.fill();
+  });
+  requestAnimationFrame(tickNet);
+}
+tickNet();
+
+// ---------------- 3D pointer tilt for cards ----------------
+function attachTilt(){
+  document.querySelectorAll('.stagebody .card').forEach(card=>{
+    card.addEventListener('pointermove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width - .5;
+      const py = (e.clientY - r.top)/r.height - .5;
+      card.style.transform = `perspective(700px) rotateX(${(-py*7).toFixed(2)}deg) rotateY(${(px*9).toFixed(2)}deg) translateY(-3px)`;
+      card.style.boxShadow = '0 26px 46px -20px rgba(14,32,56,.45)';
+    });
+    card.addEventListener('pointerleave', ()=>{
+      card.style.transform = '';
+      card.style.boxShadow = '';
+    });
+  });
+}
+
+
 let idx = 0;
 const total = S.length;
 const app = document.getElementById('app');
+const bgBase = document.getElementById('bgBase');
 const stage = document.getElementById('stage');
 const spineTrack = document.getElementById('spineTrack');
 const spineLabel = document.getElementById('spineLabel');
 const secLabel = document.getElementById('secLabel');
+const topbar = document.getElementById('topbar');
 const pageLabel = document.getElementById('pageLabel');
 const progressFill = document.getElementById('progressFill');
 const notesPanel = document.getElementById('notesPanel');
@@ -379,6 +458,8 @@ const orbPalettes = [
 function renderStatic(i){
   const s = S[i];
   app.classList.toggle('is-dark', !!s.dark);
+  bgBase.classList.toggle('is-dark', !!s.dark);
+  topbar.classList.toggle('is-dark', !!s.dark);
   const pal = orbPalettes[i % orbPalettes.length];
   orbA.style.cssText += `width:520px;height:520px;background:radial-gradient(circle,${pal[0]},transparent 70%);top:${s.dark? -180:-160}px;right:${i%2? -140:-180}px;`;
   orbB.style.cssText += `width:340px;height:340px;background:radial-gradient(circle,${pal[1]},transparent 70%);bottom:${-120-(i%3)*20}px;left:${-100-(i%2)*40}px;`;
@@ -388,6 +469,8 @@ function renderStatic(i){
     <h1 class="mtitle ${s.hero? 'hero':''}">${s.title}</h1>
     <div class="stagebody">${s.body()}</div>
   `;
+  netRGB = s.dark ? '201,162,39' : '31,111,84';
+  attachTilt();
   secLabel.textContent = s.spine.toUpperCase();
   pageLabel.textContent = String(i+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
   progressFill.style.width = (i/(total-1)*100) + '%';
@@ -401,9 +484,13 @@ function renderStatic(i){
 function goTo(i){
   i = Math.max(0, Math.min(total-1, i));
   if(i===idx) return;
+  const forward = i > idx;
   idx = i;
+  document.documentElement.classList.remove('dir-fwd','dir-back');
+  document.documentElement.classList.add(forward ? 'dir-fwd' : 'dir-back');
   if(document.startViewTransition){
-    document.startViewTransition(()=>renderStatic(idx));
+    const t = document.startViewTransition(()=>renderStatic(idx));
+    t.finished.finally(()=>{ document.documentElement.classList.remove('dir-fwd','dir-back'); });
   } else {
     renderStatic(idx);
   }
