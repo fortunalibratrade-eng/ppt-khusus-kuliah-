@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sidang Proposal — Zainal Parhan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0e2038; --navy2:#122a4a; --emerald:#1f6f54; --emerald2:#2c8a6b;
+  --gold:#c9a227; --ivory:#f7f8f6; --ink:#12181f; --muted:#5b6b7c;
+  --card:#ffffff; --line:#e4e8e6; --display:'Fraunces',serif; --body:'Inter',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{font-family:var(--body); color:var(--ink); background:#000; overflow:hidden;}
+
+/* ---------- View Transition tuning (the "connected" morph feel) ---------- */
+::view-transition-group(*){ animation-duration:.7s; animation-timing-function:cubic-bezier(.2,.7,.2,1); }
+::view-transition-old(mainTitle), ::view-transition-new(mainTitle){ height:100%; }
+::view-transition-old(root), ::view-transition-new(root){ animation-duration:.5s; }
+
+#app{ position:fixed; inset:0; background:var(--ivory); }
+#app.is-dark{ background:var(--navy); }
+
+/* ambient morphing orbs — same element, persists & drifts across slides */
+.orb{ position:fixed; border-radius:50%; filter:blur(4px); pointer-events:none; transition:none; }
+#orbA{ view-transition-name: orbA; }
+#orbB{ view-transition-name: orbB; }
+@keyframes driftA{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(18px,-24px);} }
+@keyframes driftB{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(-20px,22px);} }
+#orbA{ animation:driftA 10s ease-in-out infinite; }
+#orbB{ animation:driftB 12s ease-in-out infinite; }
+
+/* progress bar */
+#progressTrack{ position:fixed; top:0; left:0; right:0; height:4px; background:rgba(120,140,160,.18); z-index:50; }
+#progressFill{ height:100%; background:linear-gradient(90deg,var(--emerald),var(--gold)); view-transition-name:progressFill; }
+
+/* topbar */
+#topbar{ position:fixed; top:22px; left:64px; right:64px; display:flex; justify-content:space-between; align-items:center; z-index:40; font-size:12px; letter-spacing:2px; }
+#topbar span{ color:var(--muted); font-weight:700; }
+.is-dark ~ #topbar span, #app.is-dark + #progressTrack + #topbar span{ color:#9db0c6; }
+
+/* stage layout */
+#stage{ position:fixed; inset:0; padding:96px 90px 120px 90px; z-index:10; }
+.kicker{ font-weight:800; font-size:14px; letter-spacing:3.5px; text-transform:uppercase; color:var(--emerald2); margin-bottom:10px; view-transition-name:kicker; }
+.is-dark .kicker{ color:var(--gold); }
+h1.mtitle{ font-family:var(--display); font-weight:700; color:var(--navy); font-size:38px; line-height:1.15; margin:0 0 30px 0; letter-spacing:-.4px; view-transition-name:mainTitle; }
+.is-dark h1.mtitle{ color:#fff; }
+h1.mtitle.hero{ font-size:52px; }
+
+.stagebody{ view-transition-name:stagebody; }
+
+/* card system */
+.card{ background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 16px 36px -22px rgba(14,32,56,.35); }
+.badge{ width:48px;height:48px;border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--emerald); color:#fff; flex:0 0 auto; box-shadow:0 10px 18px -9px rgba(31,111,84,.55); }
+.badge.navy{ background:var(--navy); } .badge.gold{ background:var(--gold); }
+.badge svg{ width:24px;height:24px; }
+.num{ width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:17px;flex:0 0 auto;}
+
+/* entrance stagger — replays every time a slide is shown */
+.enter{ opacity:0; transform:translateY(18px); animation:enterUp .6s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes enterUp{ to{ opacity:1; transform:translateY(0);} }
+.enter.n0{animation-delay:.05s;} .enter.n1{animation-delay:.16s;} .enter.n2{animation-delay:.27s;}
+.enter.n3{animation-delay:.38s;} .enter.n4{animation-delay:.49s;} .enter.n5{animation-delay:.6s;}
+
+/* spine — persistent connective thread across all slides */
+#spineWrap{ position:fixed; left:0; right:0; bottom:0; height:78px; z-index:40; display:flex; align-items:center; padding:0 90px; }
+#spineTrack{ position:relative; flex:1; height:2px; background:rgba(120,140,160,.35); border-radius:2px; }
+#spineFill{ position:absolute; left:0; top:0; height:100%; background:linear-gradient(90deg,var(--emerald),var(--gold)); border-radius:2px; view-transition-name:spineFill; }
+.spineDot{ position:absolute; top:50%; width:9px; height:9px; border-radius:50%; background:#b9c6d1; transform:translate(-50%,-50%); transition:none; }
+.spineDot.active{ width:15px; height:15px; background:var(--gold); box-shadow:0 0 0 5px rgba(201,162,39,.22); view-transition-name:spineActive; }
+#spineLabel{ position:fixed; left:90px; bottom:30px; font-size:11px; color:var(--muted); letter-spacing:1px; z-index:41; view-transition-name:spineLabel; }
+.is-dark ~ #spineLabel{ color:#9db0c6; }
+
+/* nav hint */
+#navHint{ position:fixed; right:90px; bottom:30px; font-size:11px; color:var(--muted); letter-spacing:.5px; z-index:41; }
+
+/* notes overlay */
+#notesPanel{ position:fixed; right:24px; bottom:96px; width:360px; max-height:220px; overflow:auto; background:rgba(14,32,56,.95); color:#fff; border-radius:14px; padding:16px 18px; font-size:13px; line-height:1.5; z-index:60; box-shadow:0 20px 40px rgba(0,0,0,.4); display:none; }
+#notesPanel.show{ display:block; }
+#notesPanel b{ color:var(--gold); }
+
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+.grid4{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; }
+.row{ display:flex; gap:14px; align-items:flex-start; }
+.muted{ color:var(--muted); }
+.cbody{ font-size:14px; color:var(--muted); line-height:1.5; margin:0; }
+.ctitle{ font-family:var(--display); font-weight:700; font-size:17px; color:var(--navy); margin:0 0 6px 0; }
+</style>
+</head>
+<body>
+
+<div id="orbA" class="orb"></div>
+<div id="orbB" class="orb"></div>
+<div id="progressTrack"><div id="progressFill" style="width:0%"></div></div>
+<div id="topbar"><span id="secLabel"></span><span id="pageLabel"></span></div>
+<div id="app"><div id="stage"></div></div>
+<div id="spineWrap"><div id="spineTrack"></div></div>
+<div id="spineLabel"></div>
+<div id="navHint">← → untuk navigasi &nbsp;·&nbsp; N catatan &nbsp;·&nbsp; F fullscreen</div>
+<div id="notesPanel"></div>
+
+<script>
+// ---------------- Icon set (hand-drawn simple line icons) ----------------
+const I = {
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
+  help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 1 1 3.8 2.5c-.9.5-1.4 1-1.4 2"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H12v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H12v16h6.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>',
+  layers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><polygon points="12,3 21,8 12,13 3,8"/><polyline points="3,13 12,18 21,13"/><polyline points="3,17.5 12,22.5 21,17.5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="8,12.5 11,15.5 16,9"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3 2.7-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><circle cx="17" cy="9" r="2.4"/><path d="M15.2 14.5c2.3.2 3.9 1.8 4.3 4.2"/></svg>',
+  msg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9A1.5 1.5 0 0 1 18.5 16H9l-4.5 4v-4H5.5A1.5 1.5 0 0 1 4 14.5z"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.3C.5 8.4 2.4 5 6 5c2 0 3.6 1.1 4.4 2.6.3.6 1.3.6 1.6 0C12.9 6.1 14.5 5 16.5 5 20.1 5 22 8.4 20.5 11.7 19 16.4 12 21 12 21z"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7l1.5-2.5h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M5 3v18"/><path d="M5 4.5c3-1.5 5 1.5 8 0s5 1.5 5 1.5v8c-3 1.5-5-1.5-8 0s-5-1.5-5-1.5z"/></svg>',
+  filter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><polygon points="4,4 20,4 14,12.5 14,19 10,21 10,12.5"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="17.5" x2="12" y2="21.5"/><line x1="8.5" y1="21.5" x2="15.5" y2="21.5"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>',
+};
+
+// ---------------- Content — mirrors the revised proposal document ----------------
+const S = [
+{ kicker:"Ujian Sidang Proposal Skripsi", dark:true, title:"Pesan Damai dalam Meme<br>Perayaan Ritual Keagamaan<br>di Kalimantan Barat", hero:true, spine:"Judul",
+  notes:"Ucapkan salam pembuka, sebutkan judul penelitian dan perkenalkan diri singkat.",
+  body:()=>`
+    <div class="enter n0" style="font-size:20px;font-style:italic;color:#cfe3d8;margin-bottom:26px;">Analisis Media Sosial</div>
+    <div class="enter n1" style="width:60px;height:3px;background:var(--emerald2);margin-bottom:26px;"></div>
+    <div class="enter n2" style="color:#c9d6e6;font-size:15px;line-height:1.9;">
+      <b style="color:#fff;font-size:16.5px;">Zainal Parhan</b> — NIM 12313001<br>
+      Program Studi Studi Agama-Agama<br>
+      Fakultas Ushuluddin dan Adab · IAIN Pontianak
+    </div>`
+},
+{ kicker:"Agenda Presentasi", title:"Alur Pemaparan", spine:"Agenda",
+  notes:"Sampaikan bahwa presentasi mengikuti enam bagian ini secara ringkas, sekitar 5-7 menit.",
+  body:()=>{
+    const items=[["globe","Latar Belakang","Fenomena meme keagamaan & konteks Kalimantan Barat"],
+      ["help","Rumusan Masalah","Tiga pertanyaan penelitian"],
+      ["target","Tujuan & Manfaat","Capaian akademis dan praktis"],
+      ["book","Kajian Terdahulu & Teori","Tiga kluster riset + kerangka teori"],
+      ["search","Metode Penelitian","Pendekatan kualitatif & netnografi"],
+      ["layers","Teknik Analisis Data","Miles & Huberman + semiotika + wacana kritis"]];
+    return `<div class="grid3">${items.map((it,i)=>`
+      <div class="card enter n${i%3}" style="padding:22px;display:flex;gap:14px;animation-delay:${.05+i*0.09}s">
+        <div class="badge">${I[it[0]]}</div>
+        <div><h3 class="ctitle" style="font-size:15.5px;">${it[1]}</h3><p class="cbody">${it[2]}</p></div>
+      </div>`).join('')}</div>`;
+  }
+},
+{ kicker:"A. Latar Belakang — Konteks Digital", title:"Meme sebagai Medium Komunikasi Keagamaan", spine:"Latar I",
+  notes:"Jelaskan fenomena meme keagamaan di ruang digital Indonesia sebagai latar masalah.",
+  body:()=>{
+    const rows=[["users","Ruang digital baru","Facebook, Instagram, TikTok, dan Twitter/X membuka ruang perjumpaan lintas komunitas keagamaan tanpa batas wilayah."],
+      ["msg","Media sosial = ruang identitas","Nasrullah (2015): media sosial menjadi ruang tempat identitas, nilai, dan ideologi dikonstruksikan dan disebarluaskan."],
+      ["eye","Meme sebagai tanda","Sobur (2009): tanda dalam komunikasi visual — termasuk meme — selalu memuat nilai dan ideologi yang dibaca lewat semiotika."]];
+    return `<div style="display:flex;gap:30px;">
+      <div style="flex:1.35;display:flex;flex-direction:column;gap:20px;">
+        ${rows.map((r,i)=>`<div class="row enter n${i}" style="animation-delay:${.05+i*.12}s">
+          <div class="badge navy" style="width:42px;height:42px;">${I[r[0]]}</div>
+          <div><h3 class="ctitle" style="font-size:15px;">${r[1]}</h3><p class="cbody">${r[2]}</p></div>
+        </div>`).join('')}
+      </div>
+      <div class="card enter n3" style="flex:1;background:linear-gradient(160deg,var(--emerald),var(--emerald2));color:#fff;padding:30px;border:none;animation-delay:.4s;">
+        <div style="font-family:var(--display);font-weight:700;font-size:56px;line-height:1;">215 jt+</div>
+        <p style="font-size:13px;color:#e6f2ec;margin-top:12px;line-height:1.5;">pengguna internet Indonesia (2024) — salah satu pasar media sosial terbesar di Asia.</p>
+        <div style="height:1px;background:rgba(255,255,255,.3);margin:16px 0;"></div>
+        <p style="font-size:11px;font-style:italic;color:#cdeade;">Sumber: We Are Social & Meltwater, Digital 2024: Indonesia Country Report.</p>
+        <p style="font-size:12.5px;margin-top:14px;line-height:1.5;">Meme berkembang dari humor visual menjadi medium pembawa pesan perdamaian & toleransi.</p>
+      </div>
+    </div>`;
+  }
+},
+{ kicker:"A. Latar Belakang — Konteks Kalimantan Barat", title:"Dari Konflik Menuju Kerukunan Digital", spine:"Latar II",
+  notes:"Jelaskan mengapa Kalimantan Barat relevan: sejarah konflik lalu rekonsiliasi berbasis kearifan lokal.",
+  body:()=>{
+    const st=[["shield","1996/97 & 1999","Konflik sosial berbasis etnis melanda Kalbar, menimbulkan korban jiwa dan pengungsian besar (Petebang, 1999).","#8a3b3b"],
+      ["heart","Rekonsiliasi","Kearifan lokal & mekanisme adat memulihkan kohesi sosial pascakonflik (Amirrachman, ed., 2007).","#c9a227"],
+      ["camera","Kini: Perayaan Bersama","Gawai Dayak, Cap Go Meh, Idul Fitri, Natal dirayakan lintas komunitas — kini bergema lewat meme di media sosial.","#1f6f54"]];
+    return `<div style="display:flex;gap:24px;">
+      ${st.map((s,i)=>`<div class="card enter n${i}" style="flex:1;padding:24px;position:relative;animation-delay:${.05+i*.15}s">
+        <div class="badge" style="background:${s[3]};">${I[s[0]]}</div>
+        <h3 class="ctitle" style="margin-top:14px;">${s[1]}</h3><p class="cbody">${s[2]}</p>
+        ${i<2?'<div style="position:absolute;right:-19px;top:44px;font-size:20px;color:#c7d0d8;">&#8594;</div>':''}
+      </div>`).join('')}
+    </div>
+    <p class="enter n3" style="font-size:13px;font-style:italic;color:var(--muted);margin-top:28px;max-width:1000px;line-height:1.55;animation-delay:.5s;">
+      Provinsi ini dihuni beragam kelompok etnis (Dayak, Melayu, Tionghoa, Jawa, Madura) dengan komposisi agama majemuk — mayoritas Islam, diikuti signifikan oleh Kristen Protestan, Katolik, Buddha, Khonghucu, dan Hindu (BPS Kalbar, 2021).
+    </p>`;
+  }
+},
+{ kicker:"B. Rumusan Masalah", title:"Tiga Pertanyaan Penelitian", spine:"Masalah",
+  notes:"Bacakan singkat tiga rumusan masalah, tekankan bahwa ketiganya saling melengkapi.",
+  body:()=>{
+    const qs=["Bagaimana pesan damai direpresentasikan dalam meme perayaan ritual keagamaan yang beredar di media sosial komunitas Kalimantan Barat?",
+      "Apa saja elemen semiotik dan strategi wacana yang digunakan dalam meme perayaan ritual keagamaan sebagai medium penyampai pesan perdamaian lintas agama?",
+      "Bagaimana meme perayaan ritual keagamaan berkontribusi membangun dan memperkuat narasi perdamaian antaragama di tengah masyarakat Kalimantan Barat?"];
+    return `<div style="display:flex;flex-direction:column;gap:16px;">
+      ${qs.map((q,i)=>`<div class="card enter n${i}" style="padding:20px 26px;display:flex;gap:18px;align-items:center;animation-delay:${.05+i*.14}s">
+        <div class="num">${i+1}</div><p style="font-size:15px;color:var(--ink);line-height:1.5;margin:0;">${q}</p>
+      </div>`).join('')}
+    </div>`;
+  }
+},
+{ kicker:"C & D. Tujuan dan Manfaat Penelitian", title:"Apa yang Ingin Dicapai", spine:"Tujuan",
+  notes:"Sampaikan tujuan mengacu langsung ke rumusan masalah, lalu manfaat teoritis dan praktis.",
+  body:()=>{
+    const tujuan=["Menganalisis representasi pesan damai dalam meme perayaan ritual keagamaan.",
+      "Mengidentifikasi elemen semiotik & strategi wacana pesan perdamaian lintas agama.",
+      "Menjelaskan kontribusi meme terhadap penguatan narasi perdamaian antaragama."];
+    const manfaat=[["book","Manfaat Teoritis","Memperkaya kajian komunikasi agama digital dan komunikasi perdamaian, sekaligus mengembangkan kerangka analisis integratif semiotika, wacana kritis, dan netnografi.","var(--emerald)"],
+      ["target","Manfaat Praktis","Menjadi rujukan bagi Pemda, Kesbangpol, dan FKUB dalam merancang strategi komunikasi perdamaian, serta masukan bagi kreator konten digital di Kalimantan Barat.","var(--gold)"]];
+    return `<div class="grid2">
+      <div>
+        <div class="enter n0" style="font-weight:800;font-size:13px;letter-spacing:1.5px;color:var(--emerald2);margin-bottom:16px;">TUJUAN PENELITIAN</div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          ${tujuan.map((t,i)=>`<div class="row enter n${i}" style="animation-delay:${.15+i*.12}s">
+            <div class="num" style="width:32px;height:32px;font-size:13px;">${i+1}</div>
+            <p style="font-size:13.5px;color:var(--ink);line-height:1.45;margin:0;">${t}</p>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        ${manfaat.map((m,i)=>`<div class="card enter n${i}" style="padding:22px;animation-delay:${.3+i*.15}s">
+          <div class="row"><div class="badge" style="background:${m[3]};">${I[m[0]]}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;font-size:15.5px;">${m[1]}</h3></div>
+          <p class="cbody" style="margin-top:12px;">${m[2]}</p>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+},
+{ kicker:"A. Kajian Terdahulu", title:"Tiga Kluster Penelitian & Letak Kebaruan", spine:"Terdahulu",
+  notes:"Tegaskan kebaruan: belum ada penelitian yang menggabungkan ketiga kluster ini sekaligus.",
+  body:()=>{
+    const cl=[["msg","Meme & Komunikasi Keagamaan","Qudsy, Abdullah, & Pabbajah (2021) — mediatisasi hadis dalam meme berpotensi mendangkalkan pemahaman keagamaan."],
+      ["users","Media Sosial & Dinamika Keagamaan","Suryadi & Anwar (2024) — media sosial berpengaruh ganda: memperparah polarisasi, sekaligus membuka ruang dialog."],
+      ["shield","Kalimantan Barat & Kerukunan","Petebang (1999); Amirrachman, ed. (2007) — dokumentasi konflik & proses rekonsiliasi berbasis kearifan lokal."]];
+    return `<div class="grid3">
+      ${cl.map((c,i)=>`<div class="card enter n${i}" style="padding:22px;animation-delay:${.05+i*.14}s">
+        <div class="badge">${I[c[0]]}</div><h3 class="ctitle" style="margin-top:14px;font-size:15.5px;">${c[1]}</h3><p class="cbody">${c[2]}</p>
+      </div>`).join('')}
+    </div>
+    <div class="card enter n3" style="margin-top:20px;background:var(--navy);border:none;padding:20px 26px;display:flex;gap:16px;align-items:center;animation-delay:.55s;">
+      <div class="badge gold">${I.flag}</div>
+      <div><div style="color:#fff;font-family:var(--display);font-weight:700;font-size:16px;">Kebaruan Penelitian</div>
+      <div style="color:#cfe0da;font-size:12.5px;margin-top:4px;line-height:1.5;">Belum ada penelitian yang mengintegrasikan meme, pesan damai, dan konteks lokal Kalimantan Barat sekaligus — dengan pendekatan netnografi yang belum banyak diaplikasikan pada konteks ini.</div></div>
+    </div>`;
+  }
+},
+{ kicker:"B. Kajian Teori — Bagian 1", title:"Membaca Tanda dan Wacana dalam Meme", spine:"Teori I",
+  notes:"Jelaskan Barthes untuk membaca lapisan makna, dan Eriyanto/van Dijk untuk membaca wacana di baliknya.",
+  body:()=>`<div class="grid2">
+    <div class="card enter n0" style="padding:26px;animation-delay:.05s">
+      <div class="row"><div class="badge navy">${I.eye}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;">Semiotika Roland Barthes</h3></div>
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:12px;">
+        <div><b style="color:var(--navy);font-size:14px;">Denotasi</b><p class="cbody">Makna harfiah — apa yang tampak langsung pada gambar.</p></div>
+        <div><b style="color:var(--navy);font-size:14px;">Konotasi</b><p class="cbody">Asosiasi nilai, emosi, dan ideologi budaya di balik tanda.</p></div>
+        <div><b style="color:var(--navy);font-size:14px;">Mitos</b><p class="cbody">Membuat nilai perdamaian tampak alamiah & taken for granted (Sobur, 2009).</p></div>
+      </div>
+    </div>
+    <div class="card enter n1" style="padding:26px;animation-delay:.2s">
+      <div class="row"><div class="badge">${I.layers}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;">Wacana Kritis (Eriyanto/van Dijk)</h3></div>
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:12px;">
+        <div><b style="color:var(--navy);font-size:14px;">Teks</b><p class="cbody">Struktur bahasa & visual: pilihan kata, tata letak, simbol.</p></div>
+        <div><b style="color:var(--navy);font-size:14px;">Kognisi Sosial</b><p class="cbody">Model mental produser meme tentang perdamaian.</p></div>
+        <div><b style="color:var(--navy);font-size:14px;">Konteks Sosial</b><p class="cbody">Kondisi historis-kultural Kalimantan Barat (Eriyanto, 2001).</p></div>
+      </div>
+    </div>
+  </div>`
+},
+{ kicker:"B. Kajian Teori — Bagian 2", title:"Media Sosial & Komunikasi Perdamaian", spine:"Teori II",
+  notes:"Jelaskan Nasrullah untuk memetakan platform, dan komunikasi perdamaian sebagai kerangka normatif penilaian.",
+  body:()=>{
+    const cats=["Social Networking","Microblogging","Media Sharing"];
+    const forms=[["Inklusif","Menghargai keberagaman tanpa mengistimewakan satu kelompok."],
+      ["Dialogis","Mendorong pertukaran pandangan yang setara & terbuka."],
+      ["Rekonsiliatoris","Menyembuhkan luka konflik lewat narasi harapan & persaudaraan."]];
+    return `<div class="grid2">
+      <div class="card enter n0" style="padding:26px;animation-delay:.05s">
+        <div class="row"><div class="badge navy">${I.users}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;">Teori Media Sosial (Nasrullah)</h3></div>
+        <p class="cbody" style="margin-top:14px;">Media di internet yang memungkinkan pengguna merepresentasikan diri, berinteraksi, dan membentuk ikatan sosial secara virtual (Nasrullah, 2015).</p>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+          ${cats.map(c=>`<div style="display:flex;align-items:center;gap:8px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--emerald);display:inline-block;"></span><span style="font-size:13px;">${c}</span></div>`).join('')}
+        </div>
+        <p style="font-size:11.5px;font-style:italic;color:var(--muted);margin-top:14px;">Lokus: Facebook, Instagram, Twitter/X, TikTok.</p>
+      </div>
+      <div class="card enter n1" style="padding:26px;animation-delay:.2s">
+        <div class="row"><div class="badge">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;">Komunikasi Perdamaian</h3></div>
+        <p class="cbody" style="margin-top:14px;">Paradigma komunikasi yang menempatkan nilai perdamaian & dialog sebagai orientasi utama (berakar pada peace journalism, Galtung).</p>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+          ${forms.map(f=>`<p style="font-size:13px;margin:0;line-height:1.5;"><b style="color:var(--navy);">${f[0]}</b> — <span style="color:var(--muted);">${f[1]}</span></p>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }
+},
+{ kicker:"Metode Penelitian", title:"Kualitatif — Netnografi", spine:"Metode",
+  notes:"Jelaskan netnografi sebagai metode utama dan empat tahapan pengumpulan data.",
+  body:()=>{
+    const steps=[["search","1. Identifikasi Komunitas","Pemetaan akun/grup di Facebook, Instagram, TikTok, Twitter/X via kata kunci & tagar."],
+      ["eye","2. Observasi Daring","Mengamati pola unggahan, penyebaran, dan respons komunitas secara berkelanjutan."],
+      ["layers","3. Pengarsipan Data","Mengumpulkan meme sesuai 4 kriteria inklusi lengkap dengan metadata."],
+      ["mic","4. Wawancara Daring","4-6 informan kunci: kreator/penyebar konten keagamaan lintas agama di Kalbar."]];
+    return `<p class="enter n0" style="font-size:14px;color:var(--muted);max-width:900px;line-height:1.5;margin:0 0 26px 0;">Pendekatan kualitatif interpretatif-kritis: analisis teks media multimodal untuk memahami makna, bukan mengukur frekuensi kemunculan meme.</p>
+    <div class="grid4">
+      ${steps.map((s,i)=>`<div class="card enter n${i}" style="padding:18px;position:relative;animation-delay:${.15+i*.13}s">
+        <div class="badge" style="width:40px;height:40px;">${I[s[0]]}</div>
+        <h3 class="ctitle" style="font-size:13.5px;margin-top:12px;">${s[1]}</h3><p class="cbody" style="font-size:11.8px;">${s[2]}</p>
+        ${i<3?'<div style="position:absolute;right:-18px;top:38px;font-size:18px;color:#c7d0d8;">&#8594;</div>':''}
+      </div>`).join('')}
+    </div>`;
+  }
+},
+{ kicker:"Teknik Analisis Data", title:"Model Interaktif Miles & Huberman (1994)", spine:"Analisis",
+  notes:"Bagian penting: jelaskan reduksi data untuk menyaring meme yang relevan, dipadukan Barthes dan Eriyanto, lalu triangulasi.",
+  body:()=>{
+    const mad=[["filter","Reduksi Data","Menyaring meme mentah yang jumlahnya sangat banyak — hanya yang benar-benar sesuai 4 kriteria inklusi & rumusan masalah yang dianalisis lanjut.",true],
+      ["grid","Penyajian Data","Data disusun dalam matriks kategori: jenis perayaan, platform, serta lapisan denotasi—konotasi—mitos (Barthes).",false],
+      ["check","Penarikan Kesimpulan","Pola ditafsirkan menjadi simpulan awal, lalu diverifikasi lewat triangulasi sumber, metode, dan teori.",false]];
+    return `<div class="grid3">
+      ${mad.map((m,i)=>`<div class="card enter n${i}" style="padding:22px;${m[3]?'background:var(--navy);border:none;':''}animation-delay:${.05+i*.15}s">
+        <div class="badge ${m[3]?'gold':''}">${I[m[0]]}</div>
+        <h3 class="ctitle" style="margin-top:14px;font-size:15.5px;${m[3]?'color:#fff;':''}">${m[1]}</h3>
+        <p class="cbody" style="${m[3]?'color:#c9d6cd;':''}">${m[2]}</p>
+      </div>`).join('')}
+    </div>
+    <div class="card enter n3" style="margin-top:20px;background:#eef4f1;border-color:#d7e6df;padding:18px 26px;animation-delay:.55s;">
+      <p style="font-size:13px;color:var(--ink);line-height:1.55;margin:0;"><b style="color:var(--emerald);">Mengapa Miles & Huberman?</b> Karena meme bertema agama di media sosial jumlahnya sangat banyak, tetapi tidak semuanya relevan dengan judul dan rumusan masalah — reduksi data memastikan analisis benar-benar fokus, dipadukan dengan semiotika Barthes dan wacana kritis Eriyanto.</p>
+    </div>`;
+  }
+},
+{ kicker:"Penutup", dark:true, title:"Terima Kasih", hero:true, spine:"Penutup",
+  notes:"Tutup dengan ucapan terima kasih dan buka sesi tanya jawab.",
+  body:()=>`
+    <p class="enter n0" style="color:#cfe0da;font-style:italic;font-size:16px;margin:0 0 20px 0;">Mohon arahan dan masukan Bapak/Ibu Penguji untuk penyempurnaan penelitian ini.</p>
+    <div class="enter n1" style="width:60px;height:3px;background:var(--emerald2);margin-bottom:22px;"></div>
+    <div class="enter n2" style="color:#c9d6e6;font-size:13.5px;line-height:1.7;">
+      <b style="color:#fff;font-size:15px;">Zainal Parhan · NIM 12313001</b><br>
+      Pesan Damai dalam Meme Perayaan Ritual Keagamaan di Kalimantan Barat: Analisis Media Sosial
+    </div>`
+},
+];
+
+// ---------------- Engine ----------------
+let idx = 0;
+const total = S.length;
+const app = document.getElementById('app');
+const stage = document.getElementById('stage');
+const spineTrack = document.getElementById('spineTrack');
+const spineLabel = document.getElementById('spineLabel');
+const secLabel = document.getElementById('secLabel');
+const pageLabel = document.getElementById('pageLabel');
+const progressFill = document.getElementById('progressFill');
+const notesPanel = document.getElementById('notesPanel');
+const orbA = document.getElementById('orbA');
+const orbB = document.getElementById('orbB');
+
+// build spine dots once
+S.forEach((s,i)=>{
+  const dot = document.createElement('div');
+  dot.className = 'spineDot';
+  dot.style.left = (i/(total-1)*100) + '%';
+  dot.dataset.i = i;
+  spineTrack.appendChild(dot);
+});
+
+const orbPalettes = [
+  ['rgba(44,138,107,.35)','rgba(201,162,39,.22)'],
+  ['rgba(31,111,84,.28)','rgba(14,32,56,.12)'],
+  ['rgba(201,162,39,.24)','rgba(44,138,107,.22)'],
+];
+
+function renderStatic(i){
+  const s = S[i];
+  app.classList.toggle('is-dark', !!s.dark);
+  const pal = orbPalettes[i % orbPalettes.length];
+  orbA.style.cssText += `width:520px;height:520px;background:radial-gradient(circle,${pal[0]},transparent 70%);top:${s.dark? -180:-160}px;right:${i%2? -140:-180}px;`;
+  orbB.style.cssText += `width:340px;height:340px;background:radial-gradient(circle,${pal[1]},transparent 70%);bottom:${-120-(i%3)*20}px;left:${-100-(i%2)*40}px;`;
+
+  stage.innerHTML = `
+    <div class="kicker">${s.kicker}</div>
+    <h1 class="mtitle ${s.hero? 'hero':''}">${s.title}</h1>
+    <div class="stagebody">${s.body()}</div>
+  `;
+  secLabel.textContent = s.spine.toUpperCase();
+  pageLabel.textContent = String(i+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+  progressFill.style.width = (i/(total-1)*100) + '%';
+  spineLabel.textContent = s.spine.toUpperCase() + '  ·  ' + (i+1) + '/' + total;
+  document.querySelectorAll('.spineDot').forEach((d,di)=>{
+    d.classList.toggle('active', di===i);
+  });
+  notesPanel.innerHTML = '<b>Catatan:</b> ' + s.notes;
+}
+
+function goTo(i){
+  i = Math.max(0, Math.min(total-1, i));
+  if(i===idx) return;
+  idx = i;
+  if(document.startViewTransition){
+    document.startViewTransition(()=>renderStatic(idx));
+  } else {
+    renderStatic(idx);
+  }
+}
+
+renderStatic(0);
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); goTo(idx+1); }
+  else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); goTo(idx-1); }
+  else if(e.key.toLowerCase()==='n'){ notesPanel.classList.toggle('show'); }
+  else if(e.key.toLowerCase()==='f'){ document.documentElement.requestFullscreen?.(); }
+  else if(e.key==='Home'){ goTo(0); }
+  else if(e.key==='End'){ goTo(total-1); }
+});
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('#notesPanel')) return;
+  const x = e.clientX / window.innerWidth;
+  if(x < 0.35) goTo(idx-1); else if(x > 0.65) goTo(idx+1);
+});
+document.querySelectorAll('.spineDot').forEach(d=>{
+  d.style.cursor='pointer'; d.style.pointerEvents='auto';
+  d.addEventListener('click', (e)=>{ e.stopPropagation(); goTo(parseInt(d.dataset.i)); });
+});
+</script>
+</body>
+</html>
