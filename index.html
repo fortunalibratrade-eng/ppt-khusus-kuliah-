@@ -16,7 +16,6 @@
 html,body{height:100%;margin:0;}
 body{font-family:var(--body); color:var(--ink); background:#000; overflow:hidden;}
 
-/* ---------- View Transition tuning (the "connected" morph feel) ---------- */
 ::view-transition{ perspective:1900px; }
 ::view-transition-group(*){ animation-duration:.7s; animation-timing-function:cubic-bezier(.2,.7,.2,1); }
 ::view-transition-old(mainTitle), ::view-transition-new(mainTitle){ height:100%; }
@@ -31,12 +30,10 @@ html.dir-back::view-transition-new(root){ animation: flyInBack .75s cubic-bezier
 @keyframes flyInBack{ from{ transform:translateZ(600px) rotateY(-16deg) translateX(-70px); opacity:0;} to{ transform:none; opacity:1;} }
 
 #netCanvas{ position:fixed; inset:0; z-index:3; pointer-events:none; }
-
 #bgBase{ position:fixed; inset:0; background:var(--ivory); z-index:0; }
 #bgBase.is-dark{ background:var(--navy); }
 #app{ position:fixed; inset:0; background:transparent; z-index:10; }
 
-/* ambient morphing orbs — same element, persists & drifts across slides */
 .orb{ position:fixed; border-radius:50%; filter:blur(4px); pointer-events:none; transition:none; z-index:1; }
 #orbA{ view-transition-name: orbA; }
 #orbB{ view-transition-name: orbB; }
@@ -45,53 +42,45 @@ html.dir-back::view-transition-new(root){ animation: flyInBack .75s cubic-bezier
 #orbA{ animation:driftA 10s ease-in-out infinite; }
 #orbB{ animation:driftB 12s ease-in-out infinite; }
 
-/* progress bar */
 #progressTrack{ position:fixed; top:0; left:0; right:0; height:4px; background:rgba(120,140,160,.18); z-index:50; }
 #progressFill{ height:100%; background:linear-gradient(90deg,var(--emerald),var(--gold)); view-transition-name:progressFill; }
 
-/* topbar */
 #topbar{ position:fixed; top:22px; left:64px; right:64px; display:flex; justify-content:space-between; align-items:center; z-index:40; font-size:12px; letter-spacing:2px; }
 #topbar span{ color:var(--muted); font-weight:700; }
 #topbar.is-dark span{ color:#9db0c6; }
 
-/* stage layout */
-#stage{ position:fixed; inset:0; padding:96px 90px 120px 90px; z-index:10; perspective:1600px; }
-.kicker{ font-weight:800; font-size:14px; letter-spacing:3.5px; text-transform:uppercase; color:var(--emerald2); margin-bottom:10px; view-transition-name:kicker; }
+#stage{ position:fixed; inset:0; padding:88px 84px 116px 84px; z-index:10; perspective:1600px; }
+.kicker{ font-weight:800; font-size:13.5px; letter-spacing:3.2px; text-transform:uppercase; color:var(--emerald2); margin-bottom:8px; view-transition-name:kicker; }
 .is-dark .kicker{ color:var(--gold); }
-h1.mtitle{ font-family:var(--display); font-weight:700; color:var(--navy); font-size:38px; line-height:1.15; margin:0 0 30px 0; letter-spacing:-.4px; view-transition-name:mainTitle; }
+h1.mtitle{ font-family:var(--display); font-weight:700; color:var(--navy); font-size:33px; line-height:1.15; margin:0 0 20px 0; letter-spacing:-.4px; view-transition-name:mainTitle; }
 .is-dark h1.mtitle{ color:#fff; }
-h1.mtitle.hero{ font-size:54px; }
+h1.mtitle.hero{ font-size:54px; margin-bottom:30px; }
 
-/* card 3D system */
-.card{ background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 16px 36px -22px rgba(14,32,56,.35); transition:box-shadow .2s ease; transform-style:preserve-3d; will-change:transform; }
-.badge{ width:48px;height:48px;border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--emerald); color:#fff; flex:0 0 auto;
+.card{ background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 16px 36px -22px rgba(14,32,56,.35); transition:box-shadow .2s ease; transform-style:preserve-3d; will-change:transform; }
+.badge{ width:44px;height:44px;border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--emerald); color:#fff; flex:0 0 auto;
   box-shadow: inset 0 2px 3px rgba(255,255,255,.4), inset 0 -4px 6px rgba(0,0,0,.28), 0 3px 0 rgba(0,0,0,.18), 0 12px 20px -9px rgba(31,111,84,.6); }
 .badge.navy{ background:var(--navy); box-shadow: inset 0 2px 3px rgba(255,255,255,.25), inset 0 -4px 6px rgba(0,0,0,.35), 0 3px 0 rgba(0,0,0,.3), 0 12px 20px -9px rgba(14,32,56,.7); }
 .badge.gold{ background:var(--gold); box-shadow: inset 0 2px 3px rgba(255,255,255,.5), inset 0 -4px 6px rgba(0,0,0,.22), 0 3px 0 rgba(0,0,0,.16), 0 12px 20px -9px rgba(201,162,39,.6); }
-.badge svg{ width:24px;height:24px; }
-.num{ width:42px;height:42px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:18px;flex:0 0 auto;
+.badge svg{ width:22px;height:22px; }
+.num{ width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:16px;flex:0 0 auto;
   box-shadow: inset 0 2px 3px rgba(255,255,255,.25), inset 0 -4px 6px rgba(0,0,0,.35), 0 3px 0 rgba(0,0,0,.3), 0 10px 16px -8px rgba(14,32,56,.6); }
 
-/* entrance stagger — replays every time a slide is shown */
-.enter{ opacity:0; transform:translateY(18px) rotateX(6deg); animation:enterUp .65s cubic-bezier(.2,.7,.2,1) forwards; }
+.enter{ opacity:0; transform:translateY(16px) rotateX(6deg); animation:enterUp .65s cubic-bezier(.2,.7,.2,1) forwards; }
 @keyframes enterUp{ to{ opacity:1; transform:translateY(0) rotateX(0);} }
-.enter.n0{animation-delay:.05s;} .enter.n1{animation-delay:.16s;} .enter.n2{animation-delay:.27s;}
-.enter.n3{animation-delay:.38s;} .enter.n4{animation-delay:.49s;} .enter.n5{animation-delay:.6s;}
-.enter.n6{animation-delay:.71s;} .enter.n7{animation-delay:.82s;}
+.enter.n0{animation-delay:.05s;} .enter.n1{animation-delay:.14s;} .enter.n2{animation-delay:.23s;}
+.enter.n3{animation-delay:.32s;} .enter.n4{animation-delay:.41s;} .enter.n5{animation-delay:.5s;}
+.enter.n6{animation-delay:.59s;} .enter.n7{animation-delay:.68s;}
 
-/* spine — persistent connective thread across all slides */
-#spineWrap{ position:fixed; left:0; right:0; bottom:0; height:86px; z-index:40; display:flex; align-items:center; padding:0 90px; perspective:500px; }
+#spineWrap{ position:fixed; left:0; right:0; bottom:0; height:80px; z-index:40; display:flex; align-items:center; padding:0 84px; perspective:500px; }
 #spineTrack{ position:relative; flex:1; height:2px; background:rgba(120,140,160,.35); border-radius:2px; transform:rotateX(42deg); transform-origin:center bottom; }
 #spineFill{ position:absolute; left:0; top:0; height:100%; background:linear-gradient(90deg,var(--emerald),var(--gold)); border-radius:2px; view-transition-name:spineFill; }
 .spineDot{ position:absolute; top:50%; width:9px; height:9px; border-radius:50%; background:#b9c6d1; transform:translate(-50%,-50%); transition:none; }
 .spineDot.active{ width:15px; height:15px; background:var(--gold); box-shadow:0 0 0 5px rgba(201,162,39,.22); view-transition-name:spineActive; }
-#spineLabel{ position:fixed; left:90px; bottom:30px; font-size:11px; color:var(--muted); letter-spacing:1px; z-index:41; view-transition-name:spineLabel; }
+#spineLabel{ position:fixed; left:84px; bottom:28px; font-size:11px; color:var(--muted); letter-spacing:1px; z-index:41; view-transition-name:spineLabel; }
 .is-dark ~ #spineLabel{ color:#9db0c6; }
 
-/* nav hint */
-#navHint{ position:fixed; right:90px; bottom:30px; font-size:11px; color:var(--muted); letter-spacing:.5px; z-index:41; }
+#navHint{ position:fixed; right:84px; bottom:28px; font-size:11px; color:var(--muted); letter-spacing:.5px; z-index:41; }
 
-/* quick-access drive link — persists on every slide */
 #driveLink{ position:fixed; top:22px; left:50%; transform:translateX(-50%); z-index:55; display:flex; align-items:center; gap:7px;
   font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--muted); text-decoration:none; background:rgba(255,255,255,.7);
   border:1px solid var(--line); padding:7px 14px 7px 10px; border-radius:999px; pointer-events:auto; backdrop-filter:blur(6px);
@@ -100,20 +89,18 @@ h1.mtitle.hero{ font-size:54px; }
 #driveLink:hover{ box-shadow:0 8px 18px -8px rgba(14,32,56,.4); transform:translateX(-50%) translateY(-1px); }
 .is-dark ~ #driveLink, #driveLink.is-dark{ background:rgba(255,255,255,.08); color:#dfe8f0; border-color:rgba(255,255,255,.18); }
 
-/* notes overlay */
-#notesPanel{ position:fixed; right:24px; bottom:96px; width:360px; max-height:220px; overflow:auto; background:rgba(14,32,56,.95); color:#fff; border-radius:14px; padding:16px 18px; font-size:13px; line-height:1.5; z-index:60; box-shadow:0 20px 40px rgba(0,0,0,.4); display:none; }
+#notesPanel{ position:fixed; right:24px; bottom:92px; width:380px; max-height:260px; overflow:auto; background:rgba(14,32,56,.95); color:#fff; border-radius:14px; padding:16px 18px; font-size:13px; line-height:1.55; z-index:60; box-shadow:0 20px 40px rgba(0,0,0,.4); display:none; }
 #notesPanel.show{ display:block; }
 #notesPanel b{ color:var(--gold); }
 
-.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
-.grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
-.grid4{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+.grid4{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; }
 .row{ display:flex; gap:14px; align-items:flex-start; }
 .muted{ color:var(--muted); }
-.cbody{ font-size:14px; color:var(--muted); line-height:1.5; margin:0; }
-.ctitle{ font-family:var(--display); font-weight:700; font-size:17px; color:var(--navy); margin:0 0 6px 0; }
+.cbody{ font-size:13px; color:var(--muted); line-height:1.55; margin:0; }
+.ctitle{ font-family:var(--display); font-weight:700; font-size:16px; color:var(--navy); margin:0 0 6px 0; }
 
-/* ---------------- Intro splash (opening animation) ---------------- */
 #introOverlay{ position:fixed; inset:0; z-index:200; background:var(--navy); display:flex; align-items:center; justify-content:center; flex-direction:column; perspective:1400px; }
 #introOverlay canvas{ position:absolute; inset:0; }
 #introMark{ position:relative; z-index:2; text-align:center; opacity:0; transform:translateZ(-260px) rotateX(30deg) scale(.85); animation:introMarkIn 1.5s cubic-bezier(.16,.8,.2,1) .3s forwards; }
@@ -134,7 +121,6 @@ h1.mtitle.hero{ font-size:54px; }
 </head>
 <body>
 
-<!-- ============ OPENING 3D ANIMATION ============ -->
 <div id="introOverlay">
   <canvas id="introCanvas"></canvas>
   <div id="introRing"></div>
@@ -163,7 +149,6 @@ h1.mtitle.hero{ font-size:54px; }
 <div id="notesPanel"></div>
 
 <script>
-// ---------------- Icon set (hand-drawn simple line icons) ----------------
 const I = {
   globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
   help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 1 1 3.8 2.5c-.9.5-1.4 1-1.4 2"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>',
@@ -188,15 +173,16 @@ const I = {
   sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="4,9 8,9 13,4.5 13,19.5 8,15 4,15"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6"/><path d="M19 6.5a8 8 0 0 1 0 11"/></svg>',
   scale:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M5 7h14"/><path d="M5 7l-3 6.5a3.2 3.2 0 0 0 6 0z"/><path d="M19 7l-3 6.5a3.2 3.2 0 0 0 6 0z"/></svg>',
   table:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="4" width="17" height="16" rx="1.5"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="9.5" y1="9.5" x2="9.5" y2="20"/></svg>',
+  arrowRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></svg>',
 };
 
-// ---------------- Content — mirrors the REVISED proposal (fokus TikTok, Barthes) ----------------
+// ---------------- Content — teks lengkap siap presentasi, sesuai proposal revisi final ----------------
 const S = [
-// SLIDE 1 — COVER
+// SLIDE 1 — COVER (dipertahankan persis seperti versi awal, tidak diubah)
 { kicker:"Ujian Sidang Proposal Skripsi", dark:true, title:"Pesan Damai dalam Meme<br>Perayaan Ritual Keagamaan<br>di Kalimantan Barat", hero:true, spine:"Judul",
-  notes:"Ucapkan salam pembuka, sebutkan judul lengkap penelitian, perkenalkan diri, prodi, fakultas, kampus, dan nama dosen pembimbing akademik.",
+  notes:"Ucapkan salam pembuka, sebutkan judul penelitian, perkenalkan diri, dan sebutkan nama dosen pembimbing.",
   body:()=>`
-    <div class="enter n0" style="font-size:20px;font-style:italic;color:#cfe3d8;margin-bottom:26px;">Analisis Netnografi Media Sosial TikTok</div>
+    <div class="enter n0" style="font-size:20px;font-style:italic;color:#cfe3d8;margin-bottom:26px;">Analisis Media Sosial</div>
     <div class="enter n1" style="width:60px;height:3px;background:var(--emerald2);margin-bottom:26px;"></div>
     <div class="enter n2" style="color:#c9d6e6;font-size:15px;line-height:1.9;">
       <b style="color:#fff;font-size:16.5px;">Zainal Parhan</b> — NIM 12313001<br>
@@ -208,231 +194,256 @@ const S = [
       <b style="color:#fff;font-size:15.5px;">Prof. Dr. Zaenuddin, S.Ag, MA</b>
     </div>`
 },
-// SLIDE 2 — LATAR BELAKANG + RESEARCH GAP
+
+// SLIDE 2 — LATAR BELAKANG + RESEARCH GAP (teks penuh)
 { kicker:"A. Latar Belakang", title:"Meme TikTok sebagai Medium Pesan Damai", spine:"Latar Belakang",
-  notes:"Jelaskan singkat: TikTok sebagai ruang ekspresi audiovisual, sejarah konflik-rekonsiliasi Kalbar, lalu tegaskan tiga celah penelitian (research gap) yang mendasari topik ini.",
+  notes:"Bacakan paragraf pembuka untuk membangun konteks, lalu jelaskan dua poin (karakter meme TikTok & sejarah Kalbar), tutup dengan menegaskan tiga celah penelitian yang mendasari topik ini.",
   body:()=>{
-    const rows=[["video","Meme multimodal di TikTok","Video pendek + teks overlay + tren sound — bukan sekadar gambar diam, melainkan kesatuan tanda yang khas TikTok."],
-      ["shield","Kalbar: konflik → rekonsiliasi","Konflik etnis 1996/97 & 1999 melahirkan kearifan lokal; kini dirayakan bersama lewat Gawai Dayak, Cap Go Meh, Idul Fitri, Natal."]];
-    const gaps=["Kajian meme keagamaan masih didominasi konten kontroversial, meme damai jarang dikaji",
-      "Konteks digital-keagamaan Kalimantan Barat belum banyak diteliti secara khusus",
-      "Kajian meme yang berfokus pada TikTok & pendekatan netnografi masih jarang dilakukan"];
-    return `<div style="display:flex;gap:30px;">
-      <div style="flex:1.3;display:flex;flex-direction:column;gap:18px;">
-        ${rows.map((r,i)=>`<div class="row enter n${i}" style="animation-delay:${.05+i*.12}s">
-          <div class="badge navy" style="width:42px;height:42px;">${I[r[0]]}</div>
-          <div><h3 class="ctitle" style="font-size:15px;">${r[1]}</h3><p class="cbody">${r[2]}</p></div>
+    const rows=[["video","Meme TikTok: Teks Multimodal yang Khas","Berbeda dari meme berbasis gambar statis, meme di TikTok memadukan video pendek, teks yang ditumpangkan pada layar (on-screen text), efek visual, serta tren audio (sound) yang sedang populer. Maknanya lahir bukan dari gambar diam, melainkan dari interaksi dinamis antara gerak, suara, dan teks."],
+      ["shield","Kalimantan Barat: dari Konflik Menuju Kerukunan Digital","Provinsi ini pernah dilanda konflik sosial berbasis etnis pada 1996/1997 dan 1999, namun proses rekonsiliasi yang panjang justru melahirkan kearifan lokal yang khas. Kini keberagaman dirayakan bersama lewat Gawai Dayak, Cap Go Meh, Idul Fitri, dan Natal — dan semangat itu kini menemukan bentuk baru di linimasa TikTok."]];
+    const gaps=["Kajian meme keagamaan di Indonesia masih didominasi konten kontroversial atau berpotensi memicu konflik, sementara meme yang secara aktif membawa pesan perdamaian dan toleransi relatif jarang diteliti.",
+      "Kalimantan Barat memiliki keberagaman agama dan sejarah rekonsiliasi yang khas, namun praktik komunikasi digital masyarakatnya dalam konteks perayaan keagamaan belum banyak dikaji secara mendalam.",
+      "Penelitian meme di Indonesia masih jarang berfokus khusus pada platform TikTok dan jarang pula menggunakan pendekatan netnografi yang melibatkan peneliti langsung dalam komunitas digital."];
+    return `<p class="enter n0" style="font-size:14.5px;color:var(--ink);line-height:1.65;max-width:1080px;margin:0 0 20px 0;animation-delay:.03s;">Kehidupan bermasyarakat di era digital mengalami pergeseran besar dalam cara manusia berkomunikasi. Di antara berbagai platform yang berkembang di Indonesia, <b>TikTok</b> tampil sebagai ruang ekspresi audiovisual paling digemari generasi muda, sebab format kontennya singkat, dinamis, dan mudah menyebar lewat algoritma <i>For You Page</i>. Dari sinilah muncul fenomena menarik: meme keagamaan — dahulu sekadar humor visual — kini berkembang menjadi medium yang memuat pesan perdamaian, toleransi, dan penghargaan atas kebinekaan.</p>
+    <div style="display:flex;gap:26px;">
+      <div style="flex:1.4;display:flex;flex-direction:column;gap:14px;">
+        ${rows.map((r,i)=>`<div class="card enter n${i+1}" style="padding:16px 20px;display:flex;gap:14px;animation-delay:${.15+i*.13}s">
+          <div class="badge navy" style="width:40px;height:40px;flex-shrink:0;">${I[r[0]]}</div>
+          <div><h3 class="ctitle" style="font-size:14px;">${r[1]}</h3><p class="cbody" style="font-size:12.3px;">${r[2]}</p></div>
         </div>`).join('')}
-        <div class="card enter n2" style="margin-top:4px;padding:18px 22px;animation-delay:.3s;">
-          <div style="font-weight:800;font-size:11.5px;letter-spacing:1.5px;color:var(--emerald2);margin-bottom:10px;">RESEARCH GAP</div>
-          ${gaps.map((g,i)=>`<div class="row" style="margin-bottom:${i<2?'10px':'0'};align-items:flex-start;">
-            <div class="num" style="width:24px;height:24px;font-size:11px;flex-shrink:0;">${i+1}</div>
-            <p style="font-size:12.5px;color:var(--ink);line-height:1.45;margin:0;">${g}</p>
+        <div class="card enter n3" style="padding:16px 20px;animation-delay:.4s;">
+          <div style="font-weight:800;font-size:11px;letter-spacing:1.5px;color:var(--emerald2);margin-bottom:10px;">RESEARCH GAP — TIGA CELAH PENELITIAN</div>
+          ${gaps.map((g,i)=>`<div class="row" style="margin-bottom:${i<2?'9px':'0'};align-items:flex-start;">
+            <div class="num" style="width:22px;height:22px;font-size:10.5px;flex-shrink:0;">${i+1}</div>
+            <p style="font-size:11.5px;color:var(--ink);line-height:1.5;margin:0;">${g}</p>
           </div>`).join('')}
         </div>
       </div>
-      <div class="card enter n3" style="flex:1;background:linear-gradient(160deg,var(--emerald),var(--emerald2));color:#fff;padding:30px;border:none;animation-delay:.42s;">
-        <div style="font-family:var(--display);font-weight:700;font-size:52px;line-height:1;">73,5%</div>
-        <p style="font-size:13px;color:#e6f2ec;margin-top:12px;line-height:1.5;">pengguna internet Indonesia usia 16–64 tahun aktif menggunakan TikTok — salah satu platform video pendek dengan pertumbuhan tercepat.</p>
-        <div style="height:1px;background:rgba(255,255,255,.3);margin:16px 0;"></div>
-        <p style="font-size:11px;font-style:italic;color:#cdeade;">Sumber: We Are Social & Meltwater, Digital 2024: Indonesia Country Report.</p>
-        <p style="font-size:12.5px;margin-top:14px;line-height:1.5;">Skala keterlibatan ini merambah pula ke ekspresi keagamaan — meme berkembang dari humor visual menjadi medium pembawa pesan perdamaian.</p>
+      <div class="card enter n4" style="flex:.95;background:linear-gradient(160deg,var(--emerald),var(--emerald2));color:#fff;padding:26px;border:none;animation-delay:.55s;">
+        <div style="font-family:var(--display);font-weight:700;font-size:46px;line-height:1;">73,5%</div>
+        <p style="font-size:12px;color:#e6f2ec;margin-top:10px;line-height:1.5;">pengguna internet Indonesia usia 16–64 tahun aktif menggunakan TikTok — salah satu platform video pendek dengan pertumbuhan tercepat di Asia Tenggara.</p>
+        <div style="height:1px;background:rgba(255,255,255,.3);margin:14px 0;"></div>
+        <div style="font-family:var(--display);font-weight:700;font-size:24px;">38 jam 26 menit</div>
+        <p style="font-size:12px;color:#e6f2ec;margin-top:6px;line-height:1.5;">rata-rata waktu yang dihabiskan tiap pengguna TikTok Indonesia per bulan — durasi keterlibatan tertinggi dibanding platform lain.</p>
+        <div style="height:1px;background:rgba(255,255,255,.3);margin:14px 0;"></div>
+        <p style="font-size:10.5px;font-style:italic;color:#cdeade;">Sumber: We Are Social & Meltwater, Digital 2024: Indonesia Country Report.</p>
       </div>
     </div>`;
   }
 },
-// SLIDE 3 — RUMUSAN MASALAH, TUJUAN, MANFAAT (font besar & jelas)
-{ kicker:"B · C · D", title:"Rumusan Masalah, Tujuan & Manfaat", spine:"Fokus Penelitian",
-  notes:"Bacakan tiga rumusan masalah dengan jelas, tekankan bahwa tujuan mengacu langsung padanya, lalu manfaat teoritis & praktis.",
+
+// SLIDE 3 — RUMUSAN MASALAH, TUJUAN, MANFAAT (teks lengkap, font besar & jelas)
+{ kicker:"B · C · D. Fokus Penelitian", title:"Rumusan Masalah, Tujuan & Manfaat", spine:"Fokus Penelitian",
+  notes:"Bacakan tiap rumusan masalah lengkap dengan tujuan yang bersesuaian di sebelahnya (satu tujuan menjawab satu rumusan masalah), lalu tutup dengan manfaat teoritis dan praktis.",
   body:()=>{
-    const qs=["Bagaimana pesan damai direpresentasikan dalam meme perayaan ritual keagamaan di TikTok komunitas Kalimantan Barat?",
-      "Apa saja elemen semiotik — denotasi, konotasi, mitos — yang menyampaikan pesan perdamaian lintas agama?",
-      "Bagaimana kreator TikTok Kalimantan Barat merepresentasikan makna kerukunan melalui meme perayaan keagamaan?"];
-    const manfaat=[["book","Manfaat Teoritis","Memperkaya kajian komunikasi agama digital & komunikasi perdamaian berbasis semiotika.","var(--emerald)"],
-      ["target","Manfaat Praktis","Rujukan bagi Pemda, FKUB, dan kreator TikTok dalam merancang konten yang merawat kerukunan.","var(--gold)"]];
+    const pairs=[
+      ["Bagaimana pesan damai direpresentasikan dalam meme perayaan ritual keagamaan yang beredar di platform TikTok komunitas Kalimantan Barat?",
+       "Menganalisis dan mendeskripsikan bentuk-bentuk representasi pesan damai dalam meme perayaan ritual keagamaan yang beredar di platform TikTok komunitas Kalimantan Barat."],
+      ["Apa saja elemen semiotik — denotasi, konotasi, dan mitos — yang digunakan dalam meme TikTok perayaan ritual keagamaan sebagai medium penyampai pesan perdamaian lintas agama di Kalimantan Barat?",
+       "Mengidentifikasi elemen semiotik — denotasi, konotasi, dan mitos — yang digunakan dalam meme TikTok perayaan ritual keagamaan untuk menyampaikan pesan perdamaian lintas agama di Kalimantan Barat."],
+      ["Bagaimana kreator konten di media sosial TikTok Kalimantan Barat merepresentasikan makna kerukunan melalui meme perayaan ritual keagamaan?",
+       "Menjelaskan bagaimana kreator konten TikTok Kalimantan Barat merepresentasikan makna kerukunan melalui meme perayaan ritual keagamaan."]
+    ];
+    const manfaat=[["book","Manfaat Teoritis","Penelitian ini diharapkan memperkaya khazanah ilmu komunikasi, khususnya kajian komunikasi agama digital dan komunikasi perdamaian di Indonesia, sekaligus mengembangkan kerangka analisis semiotika yang diterapkan secara mendalam pada konten audiovisual TikTok.","var(--emerald)"],
+      ["target","Manfaat Praktis","Temuan penelitian ini diharapkan menjadi rujukan bagi pemerintah daerah, Kesbangpol, dan FKUB dalam merancang strategi komunikasi perdamaian, serta menjadi masukan bagi kreator konten TikTok dalam memproduksi konten yang mendukung toleransi dan kerukunan.","var(--gold)"]];
     return `
-    <div style="font-weight:800;font-size:14px;letter-spacing:2px;color:var(--emerald2);margin-bottom:14px;">RUMUSAN MASALAH</div>
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:26px;">
-      ${qs.map((q,i)=>`<div class="card enter n${i}" style="padding:20px 26px;display:flex;gap:20px;align-items:center;animation-delay:${.05+i*.13}s">
-        <div class="num">${i+1}</div><p style="font-size:17px;color:var(--ink);line-height:1.45;margin:0;font-weight:500;">${q}</p>
-      </div>`).join('')}
+    <div style="display:grid;grid-template-columns:32px 1fr 34px 1fr;gap:0 12px;align-items:stretch;margin-bottom:18px;">
+      <div></div>
+      <div style="font-weight:800;font-size:11px;letter-spacing:1.5px;color:var(--emerald2);padding-bottom:6px;">RUMUSAN MASALAH</div>
+      <div></div>
+      <div style="font-weight:800;font-size:11px;letter-spacing:1.5px;color:var(--gold);padding-bottom:6px;">TUJUAN PENELITIAN</div>
+      ${pairs.map((p,i)=>`
+        <div class="enter n${i}" style="animation-delay:${.05+i*.13}s;display:flex;align-items:center;justify-content:center;"><div class="num" style="width:30px;height:30px;font-size:13px;">${i+1}</div></div>
+        <div class="card enter n${i}" style="animation-delay:${.05+i*.13}s;padding:12px 16px;display:flex;align-items:center;"><p style="font-size:12.3px;color:var(--ink);line-height:1.45;margin:0;">${p[0]}</p></div>
+        <div class="enter n${i}" style="animation-delay:${.05+i*.13}s;display:flex;align-items:center;justify-content:center;color:#c7d0d8;">${I.arrowRight}</div>
+        <div class="card enter n${i}" style="animation-delay:${.05+i*.13}s;padding:12px 16px;display:flex;align-items:center;background:#f7f9f8;"><p style="font-size:12.3px;color:var(--ink);line-height:1.45;margin:0;">${p[1]}</p></div>
+      `).join('')}
     </div>
     <div class="grid2">
-      ${manfaat.map((m,i)=>`<div class="card enter n${3+i}" style="padding:22px 26px;animation-delay:${.5+i*.14}s">
-        <div class="row"><div class="badge" style="background:${m[3]};">${I[m[0]]}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;font-size:18px;">${m[1]}</h3></div>
-        <p style="font-size:15px;color:var(--muted);line-height:1.5;margin-top:12px;">${m[2]}</p>
+      ${manfaat.map((m,i)=>`<div class="card enter n${3+i}" style="padding:18px 22px;animation-delay:${.55+i*.14}s">
+        <div class="row"><div class="badge" style="background:${m[3]};width:38px;height:38px;">${I[m[0]]}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:15px;">${m[1]}</h3></div>
+        <p style="font-size:12.3px;color:var(--muted);line-height:1.5;margin-top:10px;">${m[2]}</p>
       </div>`).join('')}
     </div>`;
   }
 },
-// SLIDE 4 — PENELITIAN TERDAHULU (ringkas, naratif)
+
+// SLIDE 4 — PENELITIAN TERDAHULU (naratif, diperpanjang)
 { kicker:"A. Kajian Terdahulu", title:"Tiga Kluster Penelitian & Letak Kebaruan", spine:"Terdahulu",
-  notes:"Sampaikan singkat tiga kluster riset terdahulu, lalu tegaskan kebaruan: belum ada yang menggabungkan meme, pesan damai, TikTok, dan konteks Kalbar sekaligus.",
+  notes:"Jelaskan tiap kluster dengan kalimat lengkap sesuai kartu, lalu tegaskan kebaruan penelitian di kartu penutup berwarna navy.",
   body:()=>{
-    const cl=[["msg","Meme & Media Sosial","Qudsy, Abdullah, & Pabbajah (2021) — mediatisasi hadis dalam meme berpotensi mendangkalkan pemahaman keagamaan."],
-      ["users","Media Sosial & Polarisasi","Suryadi & Anwar (2024) — media sosial berpengaruh ganda: memperparah polarisasi, sekaligus membuka ruang dialog."],
-      ["shield","Kalbar & Kerukunan","Petebang (1999); Amirrachman, ed. (2007) — dokumentasi konflik & rekonsiliasi berbasis kearifan lokal."]];
+    const cl=[["msg","Meme & Komunikasi Keagamaan","Qudsy, Abdullah, dan Pabbajah (2021) mengkaji bagaimana meme yang memuat kutipan hadis beredar dan dimaknai di media sosial. Studi ini menemukan bahwa mediatisasi teks keagamaan lewat meme berpotensi mendangkalkan pemahaman, namun sekaligus menegaskan bahwa meme telah menjadi medium serius, bukan sekadar hiburan."],
+      ["users","Media Sosial & Dinamika Keagamaan","Suryadi dan Anwar (2024) menunjukkan bahwa media sosial memiliki pengaruh ganda terhadap wacana keagamaan: di satu sisi berpotensi memperkuat polarisasi, namun di sisi lain juga membuka ruang dialog dan narasi yang lebih konstruktif ketika pengguna sadar memproduksi konten yang mempromosikan kerukunan."],
+      ["shield","Kalimantan Barat & Dinamika Kerukunan","Petebang (1999) mendokumentasikan langsung konflik etnis 1996/1997 di Kalbar, sementara Amirrachman (2007) menunjukkan bagaimana rekonsiliasi pascakonflik melahirkan kearifan lokal — modal penting untuk memahami akar historis semangat kerukunan yang kini bergema di ruang digital."]];
     return `<div class="grid3">
-      ${cl.map((c,i)=>`<div class="card enter n${i}" style="padding:22px;animation-delay:${.05+i*.14}s">
-        <div class="badge">${I[c[0]]}</div><h3 class="ctitle" style="margin-top:14px;font-size:15.5px;">${c[1]}</h3><p class="cbody">${c[2]}</p>
+      ${cl.map((c,i)=>`<div class="card enter n${i}" style="padding:20px;animation-delay:${.05+i*.14}s">
+        <div class="badge">${I[c[0]]}</div><h3 class="ctitle" style="margin-top:12px;font-size:14.5px;">${c[1]}</h3><p class="cbody" style="font-size:12.3px;">${c[2]}</p>
       </div>`).join('')}
     </div>
-    <div class="card enter n3" style="margin-top:20px;background:var(--navy);border:none;padding:20px 26px;display:flex;gap:16px;align-items:center;animation-delay:.55s;">
-      <div class="badge gold">${I.flag}</div>
-      <div><div style="color:#fff;font-family:var(--display);font-weight:700;font-size:16px;">Kebaruan Penelitian</div>
-      <div style="color:#cfe0da;font-size:12.5px;margin-top:4px;line-height:1.5;">Belum ada penelitian yang mengintegrasikan meme, pesan damai, platform TikTok, dan konteks lokal Kalimantan Barat sekaligus — melalui pendekatan netnografi yang terfokus.</div></div>
+    <div class="card enter n3" style="margin-top:18px;background:var(--navy);border:none;padding:18px 26px;display:flex;gap:16px;align-items:center;animation-delay:.5s;">
+      <div class="badge gold" style="flex-shrink:0;">${I.flag}</div>
+      <div><div style="color:#fff;font-family:var(--display);font-weight:700;font-size:15.5px;">Kebaruan Penelitian</div>
+      <div style="color:#cfe0da;font-size:12.3px;margin-top:5px;line-height:1.55;">Dari ketiga kluster di atas, belum ada satu pun penelitian yang secara khusus mengintegrasikan empat dimensi sekaligus: meme sebagai objek, pesan damai sebagai fokus analisis, konteks lokal Kalimantan Barat, dan TikTok sebagai platform yang dikaji secara spesifik melalui pendekatan netnografi.</div></div>
     </div>`;
   }
 },
-// SLIDE 5 — KAJIAN TEORI & GRAND TEORI (resume singkat)
+
+// SLIDE 5 — KAJIAN TEORI & GRAND TEORI (diperjelas dengan contoh konkret)
 { kicker:"B. Kajian Teori", title:"Grand Teori: Semiotika Roland Barthes", spine:"Kajian Teori",
-  notes:"Barthes sebagai grand teori/pisau analisis tunggal: denotasi-konotasi-mitos. Lalu Nasrullah untuk memetakan TikTok sebagai media sharing, dan komunikasi perdamaian sebagai kerangka penilaian normatif.",
+  notes:"Barthes adalah grand teori atau pisau analisis tunggal penelitian ini — jelaskan tiga lapis maknanya dengan contoh konkret (jabat tangan lintas agama). Lalu jelaskan Nasrullah untuk memetakan TikTok, dan komunikasi perdamaian sebagai kerangka penilaian.",
   body:()=>{
-    const layers=[["Denotasi","Makna harfiah — apa yang tampak langsung di layar video."],
-      ["Konotasi","Asosiasi nilai, emosi, dan ideologi budaya di balik tanda visual, verbal, dan audio."],
-      ["Mitos","Nilai perdamaian tampak alamiah & taken for granted (Sobur, 2009)."]];
+    const layers=[["Denotasi","Makna harfiah — apa yang tampak langsung di layar. Misalnya, adegan dua orang dari latar belakang agama berbeda yang saling berjabat tangan dalam sebuah video perayaan."],
+      ["Konotasi","Asosiasi nilai, emosi, dan ideologi budaya di balik tanda visual, verbal, dan audio. Jabat tangan tadi bisa dimaknai sebagai rekonsiliasi, kesetaraan, atau penolakan terhadap prasangka."],
+      ["Mitos","Mekanisme yang membuat nilai perdamaian tampak alamiah dan tidak perlu dipertanyakan (Sobur, 2009) — sehingga kerukunan terasa sebagai identitas wajar masyarakat Kalimantan Barat."]];
     return `
-    <div class="card enter n0" style="padding:26px 30px;animation-delay:.05s;background:linear-gradient(160deg,var(--navy),var(--navy2));border:none;">
-      <div class="row"><div class="badge gold">${I.eye}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;color:#fff;font-size:19px;">Two-Order Signification — Barthes (1957, 1977)</h3></div>
-      <div class="grid3" style="margin-top:20px;">
-        ${layers.map((l,i)=>`<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:16px 18px;">
-          <div style="color:var(--gold);font-family:var(--display);font-weight:700;font-size:16px;margin-bottom:6px;">${l[0]}</div>
-          <p style="color:#d6e0ea;font-size:13px;line-height:1.5;margin:0;">${l[1]}</p>
+    <div class="card enter n0" style="padding:22px 26px;animation-delay:.05s;background:linear-gradient(160deg,var(--navy),var(--navy2));border:none;">
+      <div class="row"><div class="badge gold">${I.eye}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;color:#fff;font-size:17px;">Two-Order Signification — Barthes (1957, 1977)</h3></div>
+      <p style="color:#c9d6e6;font-size:12.3px;margin-top:12px;line-height:1.55;max-width:920px;">Kerangka ini menjadi satu-satunya pisau analisis dalam penelitian ini, diterapkan secara konsisten pada tiga elemen meme TikTok: elemen visual (gambar/video), elemen verbal (teks overlay & caption), dan elemen audio (tren sound).</p>
+      <div class="grid3" style="margin-top:16px;">
+        ${layers.map((l,i)=>`<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;">
+          <div style="color:var(--gold);font-family:var(--display);font-weight:700;font-size:15px;margin-bottom:6px;">${l[0]}</div>
+          <p style="color:#d6e0ea;font-size:11.8px;line-height:1.5;margin:0;">${l[1]}</p>
         </div>`).join('')}
       </div>
     </div>
-    <div class="grid2" style="margin-top:22px;">
-      <div class="card enter n1" style="padding:22px;animation-delay:.25s">
-        <div class="row"><div class="badge navy">${I.video}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;font-size:15px;">Nasrullah — Media Sharing</h3></div>
-        <p class="cbody" style="margin-top:12px;">TikTok dikategorikan sebagai <i>media sharing</i>: fokus pada produksi & sebar konten audiovisual (duet, stitch, sound, FYP).</p>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="card enter n1" style="padding:18px 20px;animation-delay:.25s">
+        <div class="row"><div class="badge navy" style="width:38px;height:38px;">${I.video}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14px;">Nasrullah — Kategori Media Sharing</h3></div>
+        <p class="cbody" style="margin-top:10px;font-size:12px;">Nasrullah (2015) mengklasifikasikan media sosial ke dalam enam kategori. Penelitian ini memusatkan diri pada TikTok, yang termasuk kategori <i>media sharing</i> — platform yang berfokus pada produksi dan penyebaran konten audiovisual lewat fitur duet, stitch, tren sound, dan algoritma FYP.</p>
       </div>
-      <div class="card enter n2" style="padding:22px;animation-delay:.4s">
-        <div class="row"><div class="badge">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 14px;font-size:15px;">Komunikasi Perdamaian</h3></div>
-        <p class="cbody" style="margin-top:12px;">Kerangka normatif: <b>inklusif</b> · <b>dialogis</b> · <b>rekonsiliatoris</b> — untuk menilai muatan damai dalam meme.</p>
+      <div class="card enter n2" style="padding:18px 20px;animation-delay:.38s">
+        <div class="row"><div class="badge">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14px;">Komunikasi Perdamaian</h3></div>
+        <p class="cbody" style="margin-top:10px;font-size:12px;">Kerangka normatif berakar dari <i>peace journalism</i> (Galtung), berisi tiga bentuk: <b>inklusif</b> (menghargai keberagaman tanpa mengistimewakan satu kelompok), <b>dialogis</b> (mendorong pertukaran pandangan yang setara), dan <b>rekonsiliatoris</b> (menyembuhkan luka konflik lewat narasi harapan).</p>
       </div>
     </div>`;
   }
 },
+
 // SLIDE 6 — KERANGKA BERPIKIR
 { kicker:"Kerangka Berpikir Penelitian", title:"Dari Fenomena Menuju Temuan", spine:"Kerangka Berpikir",
-  notes:"Slide penghubung — jelaskan alurnya secara lisan dari atas ke bawah: fenomena meme TikTok, dibedah dengan Barthes, dipetakan lewat Nasrullah, dinilai dengan kerangka komunikasi perdamaian, hingga temuan akhir.",
+  notes:"Slide penghubung untuk dijelaskan secara lisan: mulai dari fenomena meme TikTok di Kalbar, dibedah dengan Barthes, dipetakan lewat kategori media sharing Nasrullah, dinilai dengan kerangka komunikasi perdamaian, hingga menghasilkan temuan akhir.",
   body:()=>{
     return `
+    <p class="enter n0" style="font-size:13px;color:var(--muted);max-width:980px;line-height:1.55;margin:0 0 16px 0;animation-delay:.02s;">Kerangka berikut merangkum alur logika penelitian ini: dari fenomena di lapangan, melalui dua pisau pembacaan makna dan platform, hingga sampai pada kerangka penilaian dan temuan akhir yang diharapkan.</p>
     <div class="enter n0" style="animation-delay:.05s">
-      <div class="card" style="padding:18px 26px;text-align:center;background:var(--navy);border:none;">
-        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:16px;">Fenomena: Meme Perayaan Ritual Keagamaan di TikTok Komunitas Kalimantan Barat</span>
+      <div class="card" style="padding:16px 24px;text-align:center;background:var(--navy);border:none;">
+        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:15px;">Fenomena: Meme Perayaan Ritual Keagamaan di TikTok Komunitas Kalimantan Barat</span>
       </div>
     </div>
-    <div class="enter n0" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.15s;margin:6px 0;">${I.arrowDown}</div>
+    <div class="enter n0" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.15s;margin:5px 0;">${I.arrowDown}</div>
     <div class="grid2 enter n1" style="animation-delay:.22s;">
-      <div class="card" style="padding:18px 22px;">
-        <div class="row"><div class="badge navy" style="width:36px;height:36px;">${I.eye}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14.5px;">Semiotika Barthes</h3></div>
-        <p class="cbody" style="margin-top:8px;font-size:12.5px;">Denotasi → Konotasi → Mitos (visual · verbal · audio)</p>
+      <div class="card" style="padding:16px 20px;">
+        <div class="row"><div class="badge navy" style="width:34px;height:34px;">${I.eye}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:13.5px;">Semiotika Barthes</h3></div>
+        <p class="cbody" style="margin-top:6px;font-size:11.8px;">Denotasi → Konotasi → Mitos, dibaca dari elemen visual, verbal, dan audio meme.</p>
       </div>
-      <div class="card" style="padding:18px 22px;">
-        <div class="row"><div class="badge" style="width:36px;height:36px;">${I.video}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14.5px;">Nasrullah — Media Sharing</h3></div>
-        <p class="cbody" style="margin-top:8px;font-size:12.5px;">Memetakan karakteristik khas TikTok</p>
-      </div>
-    </div>
-    <div class="enter n2" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.34s;margin:6px 0;">${I.arrowDown}</div>
-    <div class="enter n3" style="animation-delay:.42s;">
-      <div class="card" style="padding:18px 22px;max-width:640px;margin:0 auto;">
-        <div class="row"><div class="badge" style="width:36px;height:36px;background:var(--gold);">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14.5px;">Komunikasi Perdamaian</h3></div>
-        <p class="cbody" style="margin-top:8px;font-size:12.5px;text-align:center;">Inklusif · Dialogis · Rekonsiliatoris — kerangka normatif penilaian</p>
+      <div class="card" style="padding:16px 20px;">
+        <div class="row"><div class="badge" style="width:34px;height:34px;">${I.video}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:13.5px;">Nasrullah — Media Sharing</h3></div>
+        <p class="cbody" style="margin-top:6px;font-size:11.8px;">Memetakan karakteristik khas TikTok sebagai lokus tunggal penelitian.</p>
       </div>
     </div>
-    <div class="enter n4" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.54s;margin:6px 0;">${I.arrowDown}</div>
-    <div class="enter n5" style="animation-delay:.62s;">
-      <div class="card" style="padding:18px 26px;text-align:center;background:linear-gradient(160deg,var(--emerald),var(--emerald2));border:none;">
-        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:16px;">Representasi Pesan Damai & Makna Kerukunan oleh Kreator TikTok Kalimantan Barat</span>
+    <div class="enter n2" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.32s;margin:5px 0;">${I.arrowDown}</div>
+    <div class="enter n3" style="animation-delay:.4s;">
+      <div class="card" style="padding:16px 20px;max-width:640px;margin:0 auto;">
+        <div class="row"><div class="badge" style="width:34px;height:34px;background:var(--gold);">${I.heart}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:13.5px;">Komunikasi Perdamaian</h3></div>
+        <p class="cbody" style="margin-top:6px;font-size:11.8px;text-align:center;">Inklusif · Dialogis · Rekonsiliatoris — kerangka normatif untuk menilai muatan damai dalam meme.</p>
+      </div>
+    </div>
+    <div class="enter n4" style="display:flex;justify-content:center;color:#c7d0d8;animation-delay:.5s;margin:5px 0;">${I.arrowDown}</div>
+    <div class="enter n5" style="animation-delay:.58s;">
+      <div class="card" style="padding:16px 24px;text-align:center;background:linear-gradient(160deg,var(--emerald),var(--emerald2));border:none;">
+        <span style="color:#fff;font-family:var(--display);font-weight:700;font-size:15px;">Representasi Pesan Damai & Makna Kerukunan oleh Kreator TikTok Kalimantan Barat</span>
       </div>
     </div>`;
   }
 },
-// SLIDE 7 — METODE + POPULASI/SAMPEL + PENGUMPULAN + ANALISIS (satu slide)
+
+// SLIDE 7 — METODE + POPULASI/SAMPEL + PENGUMPULAN + ANALISIS (satu slide, teks penuh)
 { kicker:"Metode Penelitian", title:"Kualitatif — Netnografi pada TikTok", spine:"Metode",
-  notes:"Satu slide padat: pendekatan kualitatif netnografi, populasi & sampel data (dalam istilah netnografi), empat tahap pengumpulan data, dan teknik analisis Miles & Huberman + Barthes + triangulasi.",
+  notes:"Jelaskan pendekatan kualitatif-netnografi, populasi & sampel data dalam istilah netnografi, empat tahap pengumpulan data, lalu teknik analisis Miles & Huberman dipadukan Barthes serta triangulasi.",
   body:()=>{
     return `
-    <div class="grid2" style="gap:18px;">
-      <div class="card enter n0" style="padding:20px 22px;animation-delay:.05s">
-        <div class="row"><div class="badge navy" style="width:36px;height:36px;">${I.compass}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:15px;">Pendekatan</h3></div>
-        <p class="cbody" style="margin-top:10px;font-size:13px;">Kualitatif, paradigma interpretatif-kritis. Analisis teks media multimodal (visual, verbal, audio) — fokus pada makna, bukan frekuensi.</p>
+    <div class="grid2" style="gap:16px;">
+      <div class="card enter n0" style="padding:16px 20px;animation-delay:.04s">
+        <div class="row"><div class="badge navy" style="width:34px;height:34px;">${I.compass}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14px;">Pendekatan & Jenis Penelitian</h3></div>
+        <p class="cbody" style="margin-top:8px;font-size:11.8px;">Kualitatif dengan paradigma interpretatif-kritis, berupa analisis teks media multimodal — memperhatikan elemen verbal, visual, dan audio secara terpadu. Fokusnya memahami makna dan fungsi sosial meme, bukan mengukur frekuensi kemunculannya.</p>
       </div>
-      <div class="card enter n1" style="padding:20px 22px;animation-delay:.15s">
-        <div class="row"><div class="badge" style="width:36px;height:36px;">${I.filter}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:15px;">Populasi & Sampel Data</h3></div>
-        <p class="cbody" style="margin-top:10px;font-size:13px;"><b>Populasi:</b> seluruh video TikTok bertema perayaan keagamaan Kalbar 2023–2024. <b>Sampel:</b> dipilih purposif — lolos 5 kriteria inklusi & 2 kriteria eksklusi.</p>
+      <div class="card enter n1" style="padding:16px 20px;animation-delay:.12s">
+        <div class="row"><div class="badge" style="width:34px;height:34px;">${I.filter}</div><h3 class="ctitle" style="align-self:center;margin:0 0 0 12px;font-size:14px;">Populasi & Sampel Data</h3></div>
+        <p class="cbody" style="margin-top:8px;font-size:11.8px;"><b>Populasi:</b> seluruh video TikTok bertema perayaan ritual keagamaan yang beredar di komunitas Kalimantan Barat pada 2023–2024. <b>Sampel:</b> dipilih secara purposif — video yang lolos 5 kriteria inklusi dan 2 kriteria eksklusi yang telah ditetapkan.</p>
       </div>
     </div>
-    <div class="grid4" style="margin-top:16px;">
-      ${[["search","Identifikasi Akun","Pemetaan kreator TikTok via kata kunci & tagar relevan."],
-        ["eye","Observasi Daring","Mengamati unggahan, sebaran, dan respons komunitas 2023–2024."],
-        ["layers","Pengarsipan Data","Video terpilih diarsip lengkap dengan metadata."],
-        ["mic","Wawancara Daring","4–6 informan kunci kreator lintas agama di Kalbar."]]
-        .map((s,i)=>`<div class="card enter n${i}" style="padding:16px;position:relative;animation-delay:${.32+i*.12}s">
-          <div class="badge" style="width:34px;height:34px;">${I[s[0]]}</div>
-          <h3 class="ctitle" style="font-size:12.5px;margin-top:10px;">${s[1]}</h3><p class="cbody" style="font-size:11.2px;">${s[2]}</p>
+    <div style="font-weight:800;font-size:11px;letter-spacing:1.5px;color:var(--emerald2);margin:16px 0 10px 0;">TEKNIK PENGUMPULAN DATA — EMPAT TAHAP NETNOGRAFI</div>
+    <div class="grid4">
+      ${[["search","1. Identifikasi Akun","Memetakan kreator TikTok Kalbar yang aktif memproduksi meme perayaan keagamaan, melalui kata kunci dan tagar relevan."],
+        ["eye","2. Observasi Daring","Mengamati pola unggahan, penyebaran, dan respons komunitas (like, komentar, share) selama periode 2023–2024."],
+        ["layers","3. Pengarsipan Data","Video yang lolos kriteria diarsipkan lengkap dengan metadata: tanggal, akun (dianonimkan), dan jumlah interaksi."],
+        ["mic","4. Wawancara Daring","Melibatkan 4–6 informan kunci: kreator lintas agama di Kalbar, untuk menggali motivasi dan makna di balik meme."]]
+        .map((s,i)=>`<div class="card enter n${i}" style="padding:14px;position:relative;animation-delay:${.28+i*.1}s">
+          <div class="badge" style="width:32px;height:32px;">${I[s[0]]}</div>
+          <h3 class="ctitle" style="font-size:12px;margin-top:9px;">${s[1]}</h3><p class="cbody" style="font-size:10.6px;">${s[2]}</p>
         </div>`).join('')}
     </div>
-    <div class="card enter n3" style="margin-top:16px;background:#eef4f1;border-color:#d7e6df;padding:16px 24px;animation-delay:.85s;">
+    <div class="card enter n3" style="margin-top:14px;background:#eef4f1;border-color:#d7e6df;padding:14px 22px;animation-delay:.75s;">
       <div class="row" style="align-items:center;">
-        <div class="badge gold" style="width:34px;height:34px;flex-shrink:0;">${I.check}</div>
-        <p style="font-size:12.8px;color:var(--ink);line-height:1.5;margin:0 0 0 14px;"><b style="color:var(--emerald);">Analisis Data —</b> Model interaktif Miles &amp; Huberman (reduksi → penyajian → simpulan/verifikasi), dipadukan analisis semiotika Barthes; keabsahan dijaga lewat triangulasi sumber (antar-akun kreator), triangulasi metode, dan <i>member checking</i> bersama informan.</p>
+        <div class="badge gold" style="width:32px;height:32px;flex-shrink:0;">${I.check}</div>
+        <p style="font-size:11.8px;color:var(--ink);line-height:1.5;margin:0 0 0 14px;"><b style="color:var(--emerald);">Teknik Analisis Data —</b> Model interaktif Miles &amp; Huberman: reduksi data (menyaring ribuan video menjadi belasan yang relevan), penyajian data (matriks denotasi–konotasi–mitos), dan penarikan kesimpulan/verifikasi — dipadukan analisis semiotika Barthes. Keabsahan dijaga lewat triangulasi sumber (antar-akun kreator), triangulasi metode (netnografi + wawancara), dan <i>member checking</i> bersama informan kunci.</p>
       </div>
     </div>`;
   }
 },
-// SLIDE 8 — PENELITIAN TERDAHULU SEBAGAI TABEL
+
+// SLIDE 8 — PENELITIAN TERDAHULU SEBAGAI TABEL (teks lebih penuh)
 { kicker:"Ringkasan Penelitian Terdahulu", title:"Posisi Penelitian Ini di Antara Studi Sejenis", spine:"Tabel Terdahulu",
-  notes:"Tunjukkan tabel ini sebagai ringkasan visual, jelaskan kolom terakhir untuk menegaskan posisi/kebaruan penelitian dibanding studi-studi sebelumnya.",
+  notes:"Gunakan tabel ini sebagai rangkuman visual — bacakan kolom 'Posisi Penelitian Ini' untuk menegaskan kebaruan dibanding tiap studi sebelumnya.",
   body:()=>{
     const rows=[
-      ["Qudsy, Abdullah & Pabbajah (2021)","Meme hadis di media sosial","Mediatisasi hadis via meme berisiko mendangkalkan pemahaman keagamaan","Fokus pada TikTok & pesan damai, bukan risiko distorsi teks"],
-      ["Suryadi & Anwar (2024)","Realitas virtual & polarisasi agama","Media sosial berpengaruh ganda: polarisasi vs ruang dialog konstruktif","Spesifik pada TikTok & konteks lokal Kalbar, bukan level nasional"],
-      ["Petebang (1999); Amirrachman (2007)","Konflik & rekonsiliasi Kalbar","Kearifan lokal memulihkan kohesi sosial pascakonflik","Menjembatani sejarah rekonsiliasi ini dengan ekspresi digital masa kini"],
+      ["Qudsy, Abdullah & Pabbajah (2021)","Meme hadis di media sosial","Mediatisasi hadis melalui meme berpotensi mendangkalkan pemahaman keagamaan, namun menegaskan meme sebagai medium serius, bukan sekadar hiburan.","Berfokus pada TikTok dan pesan damai lintas agama, bukan pada risiko distorsi pemahaman teks keagamaan."],
+      ["Suryadi & Anwar (2024)","Realitas virtual & polarisasi agama","Media sosial berpengaruh ganda: berpotensi memperparah polarisasi, sekaligus membuka ruang dialog dan narasi yang lebih konstruktif.","Menyoroti secara spesifik platform TikTok dan konteks lokal Kalbar, bukan wacana nasional secara umum."],
+      ["Petebang (1999); Amirrachman (2007)","Konflik & rekonsiliasi Kalbar","Kearifan lokal dan mekanisme adat berhasil memulihkan kohesi sosial masyarakat Kalbar pascakonflik etnis 1996/1997 dan 1999.","Menjembatani sejarah rekonsiliasi ini dengan ekspresi digital masa kini di TikTok, sesuatu yang belum pernah dikaji."],
     ];
     return `
     <div class="card enter n0" style="padding:0;overflow:hidden;animation-delay:.05s;">
-      <table style="width:100%;border-collapse:collapse;font-size:12.8px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12.3px;">
         <thead>
           <tr style="background:var(--navy);">
-            <th style="color:#fff;text-align:left;padding:14px 18px;font-weight:700;font-size:11.5px;letter-spacing:.6px;">Peneliti (Tahun)</th>
-            <th style="color:#fff;text-align:left;padding:14px 18px;font-weight:700;font-size:11.5px;letter-spacing:.6px;">Fokus</th>
-            <th style="color:#fff;text-align:left;padding:14px 18px;font-weight:700;font-size:11.5px;letter-spacing:.6px;">Temuan Utama</th>
-            <th style="color:#fff;text-align:left;padding:14px 18px;font-weight:700;font-size:11.5px;letter-spacing:.6px;background:var(--emerald);">Posisi Penelitian Ini</th>
+            <th style="color:#fff;text-align:left;padding:13px 16px;font-weight:700;font-size:11px;letter-spacing:.5px;">Peneliti (Tahun)</th>
+            <th style="color:#fff;text-align:left;padding:13px 16px;font-weight:700;font-size:11px;letter-spacing:.5px;">Fokus</th>
+            <th style="color:#fff;text-align:left;padding:13px 16px;font-weight:700;font-size:11px;letter-spacing:.5px;">Temuan Utama</th>
+            <th style="color:#fff;text-align:left;padding:13px 16px;font-weight:700;font-size:11px;letter-spacing:.5px;background:var(--emerald);">Posisi Penelitian Ini</th>
           </tr>
         </thead>
         <tbody>
           ${rows.map((r,i)=>`<tr style="background:${i%2? '#f5f7f6':'#ffffff'};border-bottom:1px solid var(--line);">
-            <td style="padding:16px 18px;font-weight:700;color:var(--navy);vertical-align:top;">${r[0]}</td>
-            <td style="padding:16px 18px;color:var(--ink);vertical-align:top;">${r[1]}</td>
-            <td style="padding:16px 18px;color:var(--muted);vertical-align:top;">${r[2]}</td>
-            <td style="padding:16px 18px;color:var(--emerald);vertical-align:top;font-weight:600;background:rgba(31,111,84,.06);">${r[3]}</td>
+            <td style="padding:14px 16px;font-weight:700;color:var(--navy);vertical-align:top;">${r[0]}</td>
+            <td style="padding:14px 16px;color:var(--ink);vertical-align:top;">${r[1]}</td>
+            <td style="padding:14px 16px;color:var(--muted);vertical-align:top;line-height:1.45;">${r[2]}</td>
+            <td style="padding:14px 16px;color:var(--emerald);vertical-align:top;font-weight:600;background:rgba(31,111,84,.06);line-height:1.45;">${r[3]}</td>
           </tr>`).join('')}
         </tbody>
       </table>
     </div>
-    <div class="row enter n1" style="margin-top:18px;animation-delay:.4s;align-items:center;">
-      <div class="badge gold" style="width:38px;height:38px;">${I.table}</div>
-      <p style="font-size:13px;color:var(--muted);margin:0 0 0 14px;line-height:1.5;">Ketiga kluster ini belum pernah diintegrasikan sekaligus — meme, pesan damai, platform TikTok, dan konteks lokal Kalimantan Barat — inilah ruang kebaruan penelitian.</p>
+    <div class="row enter n1" style="margin-top:16px;animation-delay:.4s;align-items:center;">
+      <div class="badge gold" style="width:36px;height:36px;flex-shrink:0;">${I.table}</div>
+      <p style="font-size:12.3px;color:var(--muted);margin:0 0 0 14px;line-height:1.5;">Ketiga kluster ini belum pernah diintegrasikan sekaligus — meme, pesan damai, platform TikTok, dan konteks lokal Kalimantan Barat. Inilah ruang kosong akademis yang diisi oleh penelitian ini.</p>
     </div>`;
   }
 },
+
 // SLIDE 9 — PENUTUP (daftar pustaka di background)
 { kicker:"Penutup", dark:true, title:"Terima Kasih", hero:true, spine:"Penutup",
   notes:"Tutup dengan ucapan terima kasih dan buka sesi tanya jawab. Daftar pustaka lengkap tampil samar di latar belakang bila penguji ingin merujuknya.",
   bibliography:true,
   body:()=>`
-    <p class="enter n0" style="color:#cfe0da;font-style:italic;font-size:16px;margin:0 0 20px 0;">Mohon arahan dan masukan Bapak/Ibu Penguji untuk penyempurnaan penelitian ini.</p>
+    <p class="enter n0" style="color:#cfe0da;font-style:italic;font-size:16px;margin:0 0 18px 0;max-width:760px;line-height:1.6;">Demikian pemaparan proposal penelitian ini. Mohon arahan, koreksi, dan masukan dari Bapak/Ibu Penguji agar penelitian ini dapat disempurnakan sebelum memasuki tahap pengumpulan dan analisis data di lapangan.</p>
     <div class="enter n1" style="width:60px;height:3px;background:var(--emerald2);margin-bottom:22px;"></div>
     <div class="enter n2" style="color:#c9d6e6;font-size:13.5px;line-height:1.7;">
       <b style="color:#fff;font-size:15px;">Zainal Parhan · NIM 12313001</b><br>
-      Pesan Damai dalam Meme Perayaan Ritual Keagamaan di Kalimantan Barat: Analisis Netnografi Media Sosial TikTok
+      Pesan Damai dalam Meme Perayaan Ritual Keagamaan di Kalimantan Barat: Analisis Netnografi Media Sosial TikTok<br>
+      Program Studi Studi Agama-Agama · Fakultas Ushuluddin dan Adab · IAIN Pontianak
     </div>`
 },
 ];
 
-// ---------------- Selected references shown faintly in the background of the closing slide ----------------
 const DAFTAR_PUSTAKA = [
   "Amirrachman, A. (Ed.). (2007). Revitalisasi Kearifan Lokal. Jakarta: ICIP.",
   "Barthes, R. (1957). Mythologies. Paris: Éditions du Seuil.",
@@ -451,7 +462,6 @@ const DAFTAR_PUSTAKA = [
   "We Are Social & Meltwater. (2024). Digital 2024: Indonesia Country Report.",
 ];
 
-// ---------------- Ambient 3D particle network (represents the digital social network) ----------------
 const netCanvas = document.getElementById('netCanvas');
 const nctx = netCanvas.getContext('2d');
 function resizeNet(){ netCanvas.width = innerWidth; netCanvas.height = innerHeight; }
@@ -490,9 +500,8 @@ function tickNet(){
 }
 tickNet();
 
-// ---------------- 3D pointer tilt for cards ----------------
 function attachTilt(){
-  document.querySelectorAll('.stagebody .card, #stage .card').forEach(card=>{
+  document.querySelectorAll('#stage .card').forEach(card=>{
     card.addEventListener('pointermove', (e)=>{
       const r = card.getBoundingClientRect();
       const px = (e.clientX - r.left)/r.width - .5;
@@ -506,7 +515,6 @@ function attachTilt(){
     });
   });
 }
-
 
 let idx = 0;
 const total = S.length;
@@ -524,7 +532,6 @@ const orbA = document.getElementById('orbA');
 const orbB = document.getElementById('orbB');
 const driveLink = document.getElementById('driveLink');
 
-// build spine dots once
 S.forEach((s,i)=>{
   const dot = document.createElement('div');
   dot.className = 'spineDot';
@@ -613,7 +620,6 @@ document.querySelectorAll('.spineDot').forEach(d=>{
   d.addEventListener('click', (e)=>{ e.stopPropagation(); goTo(parseInt(d.dataset.i)); });
 });
 
-// ---------------- Intro splash: converging particle network forming into the title ----------------
 (function(){
   const introWordsEl = document.getElementById('introWords');
   const words = "Pesan Damai dalam Meme Perayaan Ritual Keagamaan di Kalimantan Barat".split(' ');
@@ -635,6 +641,7 @@ document.querySelectorAll('.spineDot').forEach(d=>{
     p.ty = cy() + Math.sin(ang)*rad*0.55;
   });
   let t0 = performance.now();
+  let introDone = false;
   function frame(now){
     const t = Math.min(1, (now - t0)/2200);
     const ease = 1 - Math.pow(1-t, 3);
@@ -661,7 +668,6 @@ document.querySelectorAll('.spineDot').forEach(d=>{
     }
     if(t < 1 || !introDone){ requestAnimationFrame(frame); }
   }
-  let introDone = false;
   requestAnimationFrame(frame);
 
   function leaveIntro(){
